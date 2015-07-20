@@ -1,7 +1,8 @@
-[![Build Status](http://runbot.odoo.com/runbot/badge/flat/1/8.0.svg)](http://runbot.odoo.com/runbot)
-[![Tech Doc](http://img.shields.io/badge/8.0-docs-8f8f8f.svg?style=flat)](http://www.odoo.com/documentation/8.0) 
-[![Help](http://img.shields.io/badge/8.0-help-8f8f8f.svg?style=flat)](https://www.odoo.com/forum/help-1)
-[![Nightly Builds](http://img.shields.io/badge/8.0-nightly-8f8f8f.svg?style=flat)](http://nightly.odoo.com/)
+Cambios fork:
+-------------
+
+**stock.py: 1068**: Se permite un albarán con movimientos de diferentes ubicaciones. También se impide mover a
+ubicaciones que tengan ubicaciones hijas
 
 Odoo
 ----
