@@ -1060,12 +1060,6 @@ class stock_picking(osv.osv):
                 product_uom[move.product_id.id] = move.product_id.uom_id
             if move.product_uom.id != move.product_id.uom_id.id and move.product_uom.factor > product_uom[move.product_id.id].factor:
                 product_uom[move.product_id.id] = move.product_uom
-            if len(move.location_dest_id.child_ids):
-                '''Modificaciones pertenencientes a CMNT_010_15_PHA.
-                   Se permite un albaran con movimientos de distinto origen,
-                   y se impide mover algo a una ubicacion con hijas'''
-                raise Warning(_('Location Error'), _('Location %s has child locations. \
-The movements should be at an end location') % move.location_dest_id.name)
 
         pack_obj = self.pool.get("stock.quant.package")
         quant_obj = self.pool.get("stock.quant")
@@ -2392,8 +2386,14 @@ class stock_move(osv.osv):
         operations = set()
         move_qty = {}
         for move in self.browse(cr, uid, ids, context=context):
+            if len(move.location_dest_id.child_ids) and not len(move.linked_move_operation_ids):
+                raise Warning(_('Location Error'), _('Location %s has child locations. \
+The movements should be at an end location') % move.location_dest_id.name)
             move_qty[move.id] = move.product_qty
             for link in move.linked_move_operation_ids:
+                if len(link.operation_id.location_dest_id.child_ids):
+                    raise Warning(_('Location Error'), _('Location %s has child locations. \
+The movements should be at an end location') % move.location_dest_id.name)
                 operations.add(link.operation_id)
 
         #Sort operations according to entire packages first, then package + lot, package only, lot only
