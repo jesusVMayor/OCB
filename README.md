@@ -2,6 +2,7 @@ Cambios fork:
 -------------
 
 **stock.py: 1068**: Se permite un albarán con movimientos de diferentes ubicaciones.
+
 **stock.py: 2389**: Se impide mover a ubicaciones que tengan ubicaciones hijas
 
 Odoo
