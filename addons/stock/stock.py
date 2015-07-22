@@ -2386,7 +2386,9 @@ class stock_move(osv.osv):
         operations = set()
         move_qty = {}
         for move in self.browse(cr, uid, ids, context=context):
-            if len(move.location_dest_id.child_ids) and not len(move.linked_move_operation_ids):
+            if len(move.location_dest_id.child_ids) and not \
+                    len(move.linked_move_operation_ids) and not \
+                    context.get('ignore_child', False):
                 raise Warning(_('Location Error'), _('Location %s has child locations. \
 The movements should be at an end location') % move.location_dest_id.name)
             move_qty[move.id] = move.product_qty
