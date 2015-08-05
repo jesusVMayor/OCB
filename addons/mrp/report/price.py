@@ -167,7 +167,7 @@ class report_custom(report_rml):
                     </row></lines>'"""
             else:
                 bom = bom_pool.browse(cr, uid, bom_id, context=context)
-                factor = number * product.uom_id.factor / bom.product_uom.factor
+                factor = number * product.uom_id.factor_inv / bom.product_uom.factor_inv
                 sub_boms = bom_pool._bom_explode(cr, uid, bom, product, factor / bom.product_qty, context=context)
                 total = 0
                 total_strd = 0

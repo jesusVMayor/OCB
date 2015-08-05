@@ -85,11 +85,11 @@ class product_template(osv.osv):
                 cycle = wline.cycle_nbr
                 hour = (wc.time_start + wc.time_stop + cycle * wc.time_cycle) *  (wc.time_efficiency or 1.0)
                 price += wc.costs_cycle * cycle + wc.costs_hour * hour
-                price = self.pool.get('product.uom')._compute_price(cr,uid,bom.product_uom.id, price, bom.product_id.uom_id.id)
+                price = self.pool.get('product.uom')._compute_price(cr,uid,bom.product_uom.id, price, bom.product_tmpl_id.uom_id.id)
         
         #Convert on product UoM quantities
         if price > 0:
-            price = uom_obj._compute_price(cr, uid, bom.product_uom.id, price / bom.product_qty, bom.product_id.uom_id.id)
+            price = uom_obj._compute_price(cr, uid, bom.product_uom.id, price / bom.product_qty, bom.product_tmpl_id.uom_id.id)
 
         product = tmpl_obj.browse(cr, uid, bom.product_tmpl_id.id, context=context)
         if not test:
