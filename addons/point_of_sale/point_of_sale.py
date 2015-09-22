@@ -425,7 +425,7 @@ class pos_session(osv.osv):
             bank_statement_ids.append(statement_id)
 
         values.update({
-            'name': self.pool['ir.sequence'].get(cr, uid, 'pos.session'),
+            'name': self.pool['ir.sequence'].get(cr, uid, 'pos.session', context=context),
             'statement_ids' : [(6, 0, bank_statement_ids)],
             'config_id': config_id
         })
@@ -599,7 +599,7 @@ class pos_order(osv.osv):
             session.refresh()
 
         if not float_is_zero(order['amount_return'], self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')):
-            cash_journal = session.cash_journal_id
+            cash_journal = session.cash_journal_id.id
             if not cash_journal:
                 # Select for change one of the cash journals used in this payment
                 cash_journal_ids = self.pool['account.journal'].search(cr, uid, [
@@ -1169,6 +1169,9 @@ class pos_order(osv.osv):
             # Create an move for each order line
 
             cur = order.pricelist_id.currency_id
+            round_per_line = True
+            if order.company_id.tax_calculation_rounding_method == 'round_globally':
+                round_per_line = False
             for line in order.lines:
                 tax_amount = 0
                 taxes = []
@@ -1178,14 +1181,14 @@ class pos_order(osv.osv):
                 computed_taxes = account_tax_obj.compute_all(cr, uid, taxes, line.price_unit * (100.0-line.discount) / 100.0, line.qty)['taxes']
 
                 for tax in computed_taxes:
-                    tax_amount += cur_obj.round(cr, uid, cur, tax['amount'])
+                    tax_amount += cur_obj.round(cr, uid, cur, tax['amount']) if round_per_line else tax['amount']
                     if tax_amount < 0:
                         group_key = (tax['ref_tax_code_id'], tax['base_code_id'], tax['account_collected_id'], tax['id'])
                     else:
                         group_key = (tax['tax_code_id'], tax['base_code_id'], tax['account_collected_id'], tax['id'])
 
                     group_tax.setdefault(group_key, 0)
-                    group_tax[group_key] += cur_obj.round(cr, uid, cur, tax['amount'])
+                    group_tax[group_key] += cur_obj.round(cr, uid, cur, tax['amount']) if round_per_line else tax['amount']
 
                 amount = line.price_subtotal
 
@@ -1255,7 +1258,7 @@ class pos_order(osv.osv):
                     'credit': ((tax_amount>0) and tax_amount) or 0.0,
                     'debit': ((tax_amount<0) and -tax_amount) or 0.0,
                     'tax_code_id': key[tax_code_pos],
-                    'tax_amount': abs(tax_amount),
+                    'tax_amount': tax_amount,
                     'partner_id': order.partner_id and self.pool.get("res.partner")._find_accounting_partner(order.partner_id).id or False
                 })
 
@@ -1377,7 +1380,7 @@ class pos_order_line(osv.osv):
     }
 
     _defaults = {
-        'name': lambda obj, cr, uid, context: obj.pool.get('ir.sequence').get(cr, uid, 'pos.order.line'),
+        'name': lambda obj, cr, uid, context: obj.pool.get('ir.sequence').get(cr, uid, 'pos.order.line', context=context),
         'qty': lambda *a: 1,
         'discount': lambda *a: 0.0,
         'company_id': lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.id,
