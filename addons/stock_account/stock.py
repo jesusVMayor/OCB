@@ -302,7 +302,9 @@ class stock_picking(osv.osv):
             origin = move.picking_id.name
             partner, user_id, currency_id = move_obj._get_master_data(cr, uid, move, company, context=context)
 
-            key = (partner, currency_id, company.id, user_id)
+            # CMNT_PATCH: Nueva key para que no agrupe por comercial las facturas
+            # key = (partner, currency_id, company.id, user_id)
+            key = (partner, currency_id, company.id)
             invoice_vals = self._get_invoice_vals(cr, uid, key, inv_type, journal_id, move, context=context)
 
             if key not in invoices:
