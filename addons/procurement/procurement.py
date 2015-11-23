@@ -232,7 +232,7 @@ class procurement_order(osv.osv):
                     else:
                         raise
             _logger.debug("CMNT tiempo total cada proc original : %s", time.time() - proc_ini_1)
-        _logger.debug("CMNT tiempo total proc original : ", time.time() - proc_ini)
+        _logger.debug("CMNT tiempo total proc original : %s", time.time() - proc_ini)
         return True
 
     def check(self, cr, uid, ids, autocommit=False, context=None):
