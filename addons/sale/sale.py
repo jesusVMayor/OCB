@@ -27,6 +27,9 @@ from openerp.tools.translate import _
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
 import openerp.addons.decimal_precision as dp
 from openerp import workflow
+import time
+import logging
+_logger = logging.getLogger(__name__)
 
 class res_company(osv.Model):
     _inherit = "res.company"
@@ -729,6 +732,8 @@ class sale_order(osv.osv):
 
         :return: True
         """
+        _logger.debug("CMNT INICIO ship_create original:")
+        t_ini= time.time()
         context = context or {}
         context['lang'] = self.pool['res.users'].browse(cr, uid, uid).lang
         procurement_obj = self.pool.get('procurement.order')
@@ -741,6 +746,8 @@ class sale_order(osv.osv):
                 order.write({'procurement_group_id': group_id})
 
             for line in order.order_line:
+                _logger.debug("CMNT producto: %s ", line.product_id.name)
+                init_prod = time.time()
                 if line.state == 'cancel':
                     continue
                 #Try to fix exception procurement (possible when after a shipping exception the user choose to recreate)
@@ -760,10 +767,13 @@ class sale_order(osv.osv):
                     ctx['procurement_autorun_defer'] = True
                     proc_id = procurement_obj.create(cr, uid, vals, context=ctx)
                     proc_ids.append(proc_id)
+                _logger.debug("CMNT tiempo producto: %s, %s ", line.product_id.name, time.time() - init_prod)
             #Confirm procurement order such that rules will be applied on it
             #note that the workflow normally ensure proc_ids isn't an empty list
+            _logger.debug("CMNT inicio run")
+            init_run = time.time()
             procurement_obj.run(cr, uid, proc_ids, context=context)
-
+            _logger.debug("CMNT tiempo run: %s", time.time() - init_run)
             #if shipping was in exception and the user choose to recreate the delivery order, write the new status of SO
             if order.state == 'shipping_except':
                 val = {'state': 'progress', 'shipped': False}
@@ -774,6 +784,7 @@ class sale_order(osv.osv):
                             val['state'] = 'manual'
                             break
                 order.write(val)
+        _logger.debug("CMNT FIN de SHIP CREATE ORIGINAL!!!: %s", time.time() - t_ini)
         return True
 
 

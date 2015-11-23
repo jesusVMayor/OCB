@@ -28,6 +28,9 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from psycopg2 import OperationalError
 import openerp
+import time
+import logging
+_logger = logging.getLogger(__name__)
 
 class procurement_group(osv.osv):
     _inherit = 'procurement.group'
@@ -199,10 +202,13 @@ class procurement_order(osv.osv):
             if not procurement.rule_id.location_src_id:
                 self.message_post(cr, uid, [procurement.id], body=_('No source location defined!'), context=context)
                 return False
+            tini_confirm = time.time()
             move_obj = self.pool.get('stock.move')
             move_dict = self._run_move_create(cr, uid, procurement, context=context)
             #create the move as SUPERUSER because the current user may not have the rights to do it (mto product launched by a sale for example)
+
             move_obj.create(cr, SUPERUSER_ID, move_dict, context=context)
+            _logger.debug("CMNT tiempo crea movimiento: (_run): %s", str(time.time() - tini_confirm))
             return True
         return super(procurement_order, self)._run(cr, uid, procurement, context=context)
 
@@ -217,7 +223,9 @@ class procurement_order(osv.osv):
             if procurement.state == "running" and procurement.rule_id and procurement.rule_id.action == "move":
                 move_to_confirm_ids += [m.id for m in procurement.move_ids if m.state == 'draft']
         if move_to_confirm_ids:
+            tini_confirm = time.time()
             self.pool.get('stock.move').action_confirm(cr, uid, move_to_confirm_ids, context=context)
+            _logger.debug("CMNT tiempo action_confirm: %s", str(time.time() - tini_confirm))
         return res
 
     def _check(self, cr, uid, procurement, context=None):

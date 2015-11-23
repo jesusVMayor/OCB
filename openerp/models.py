@@ -1642,6 +1642,9 @@ class BaseModel(object):
 
         :raise AccessError: * if user tries to bypass access rules for read on the requested object.
         """
+        #CMNT_DEBUG
+        _logger.debug("search en  tabla %s, domain %s, context %s,, count %s",
+                             self._table, args, context, count)
         return self._search(cr, user, args, offset=offset, limit=limit, order=order, context=context, count=count)
 
     #
@@ -3139,6 +3142,9 @@ class BaseModel(object):
     # add explicit old-style implementation to read()
     @api.v7
     def read(self, cr, user, ids, fields=None, context=None, load='_classic_read'):
+        #CMNT_DEBUG
+        _logger.debug("read en  tabla %s, ids %s, fields %s",
+                             self._table, ids, fields)
         records = self.browse(cr, user, ids, context)
         result = BaseModel.read(records, fields, load=load)
         return result if isinstance(ids, list) else (bool(result) and result[0])
@@ -3157,6 +3163,7 @@ class BaseModel(object):
         :raise AccessError: if user has no read rights on some of the given
                 records
         """
+
         # check access rights
         self.check_access_rights('read')
         fields = self.check_field_access_rights('read', fields)
@@ -3757,6 +3764,8 @@ class BaseModel(object):
           .. note:: Values marked as ``_`` in the list above are ignored and
                     can be anything, generally ``0`` or ``False``.
         """
+        _logger.debug("CMNT Write de API para %s con  vals= %s , context= %s", self._name, vals, self._context)
+        init_t = time.time()
         if not self:
             return True
 
@@ -3792,7 +3801,12 @@ class BaseModel(object):
                 record._cache.update(record._convert_to_cache(new_vals, update=True))
             for key in new_vals:
                 self._fields[key].determine_inverse(self)
-
+        ex_time = time.time() - init_t
+        if ex_time > 1:
+            _logger.debug("CMNT!!!!!!!!!!!!!!!!!!!!!!!!!")
+            _logger.debug("WARNING CMNT Write de API")
+            _logger.debug("CMNT !!!!!!!!!!!!!!!!!!!!!!!!!")
+        _logger.debug("CMNT Write de API Tiempo para : %s - %s", self._name, ex_time)
         return True
 
     def _write(self, cr, user, ids, vals, context=None):

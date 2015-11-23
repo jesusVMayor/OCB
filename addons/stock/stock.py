@@ -1250,7 +1250,9 @@ class stock_picking(osv.osv):
                     qty_to_assign -= qty_on_link
                     qtyassign_cmp = float_compare(qty_to_assign, 0.0, precision_rounding=rounding)
             return qtyassign_cmp == 0
-
+        _logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        _logger.debug("CMNT RECOMPUTE PICKING !!!!!!!!!!")
+        _logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         uom_obj = self.pool.get('product.uom')
         package_obj = self.pool.get('stock.quant.package')
         quant_obj = self.pool.get('stock.quant')
@@ -1414,7 +1416,6 @@ class stock_picking(osv.osv):
 
         created_id = self.pool['stock.transfer_details'].create(cr, uid, {'picking_id': len(picking) and picking[0] or False}, context)
         return self.pool['stock.transfer_details'].wizard_view(cr, uid, created_id, context)
-
 
     @api.cr_uid_ids_context
     def do_transfer(self, cr, uid, picking_ids, context=None):
@@ -1995,6 +1996,7 @@ class stock_move(osv.osv):
             propagated_date_field = 'date'
 
         if not context.get('do_not_propagate', False) and (propagated_date_field or propagated_changes_dict):
+            _logger.debug("CMNT PROPAGA en el write del move!!!")
             #any propagation is (maybe) needed
             for move in self.browse(cr, uid, ids, context=context):
                 if move.move_dest_id and move.propagate:
@@ -2388,6 +2390,8 @@ class stock_move(osv.osv):
     def action_done(self, cr, uid, ids, context=None):
         """ Process completely the moves given as ids and if all moves are done, it will finish the picking.
         """
+        init_t = time.time()
+        _logger.debug("CMNT COMIENZA action_done original")
         context = context or {}
         picking_obj = self.pool.get("stock.picking")
         quant_obj = self.pool.get("stock.quant")
@@ -2478,6 +2482,7 @@ class stock_move(osv.osv):
                 done_picking.append(picking.id)
         if done_picking:
             picking_obj.write(cr, uid, done_picking, {'date_done': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)}, context=context)
+        _logger.debug("CMNT FIN action_done original %s",  time.time() - init_t)
         return True
 
     def unlink(self, cr, uid, ids, context=None):

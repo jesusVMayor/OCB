@@ -27,6 +27,9 @@ from openerp.osv import fields, osv
 import openerp.addons.decimal_precision as dp
 from openerp.tools.translate import _
 import openerp
+import time
+import logging
+_logger = logging.getLogger(__name__)
 
 PROCUREMENT_PRIORITIES = [('0', 'Not urgent'), ('1', 'Normal'), ('2', 'Urgent'), ('3', 'Very Urgent')]
 
@@ -195,15 +198,24 @@ class procurement_order(osv.osv):
         return self.write(cr, uid, ids, {'state': 'confirmed'}, context=context)
 
     def run(self, cr, uid, ids, autocommit=False, context=None):
+        _logger.debug("CMNT Autocommit /run original %s", autocommit)
+        proc_ini= time.time()
         for procurement_id in ids:
+            proc_ini_1= time.time()
             #we intentionnaly do the browse under the for loop to avoid caching all ids which would be resource greedy
             #and useless as we'll make a refresh later that will invalidate all the cache (and thus the next iteration
-            #will fetch all the ids again) 
+            #will fetch all the ids again)
+
             procurement = self.browse(cr, uid, procurement_id, context=context)
             if procurement.state not in ("running", "done"):
                 try:
+                    _logger.debug("CMNT previo _assign: %s", procurement.product_id.name)
+                    as_ini= time.time()
                     if self._assign(cr, uid, procurement, context=context):
+                        _logger.debug("CMNT post _assign: %s", time.time() - as_ini)
+                        run_ini= time.time()
                         res = self._run(cr, uid, procurement, context=context or {})
+                        _logger.debug("CMNT post _run: %s", time.time() - run_ini)
                         if res:
                             self.write(cr, uid, [procurement.id], {'state': 'running'}, context=context)
                         else:
@@ -219,6 +231,8 @@ class procurement_order(osv.osv):
                         continue
                     else:
                         raise
+            _logger.debug("CMNT tiempo total cada proc original : %s", time.time() - proc_ini_1)
+        _logger.debug("CMNT tiempo total proc original : ", time.time() - proc_ini)
         return True
 
     def check(self, cr, uid, ids, autocommit=False, context=None):
