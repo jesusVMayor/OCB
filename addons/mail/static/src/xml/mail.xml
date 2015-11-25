@@ -70,7 +70,7 @@
         <span class="oe_attachment_file">
             <span class="oe_add">
                 <!-- uploader of file -->
-                <button class="oe_attach"><span class="oe_e">'</span></button> 
+                <button class="oe_attach"><span class="oe_e">'</span></button>
                 <span class='oe_attach_label'>Attach a File</span>
                 <t t-call="HiddenInputFile">
                     <t t-set="fileupload_id" t-value="widget.fileupload_id"/>
@@ -135,12 +135,12 @@
             <t t-foreach="widget.partner_ids" t-as="partner">
                 <t t-if="widget.is_private or (widget.user_pid != partner[0])">
                     <t t-if="!widget.is_private and inc==0"> and </t>
-	                <span t-attf-class="oe_partner_follower #{inc>=3?'oe_hidden':''}"><t t-if="inc" t-raw="', '"/>
+                    <span t-attf-class="oe_partner_follower #{inc>=3?'oe_hidden':''}"><t t-if="inc" t-raw="', '"/>
                         <a t-if="widget.options.show_link" t-attf-href="#model=res.partner&amp;id=#{partner[0]}"><t t-esc="partner[1]"/></a>
                         <t t-if="!widget.options.show_link" t-esc="partner[1]"/>
-	                </span>
-	                <t t-set="inc" t-value="inc+1"/>
-	            </t>
+                    </span>
+                    <t t-set="inc" t-value="inc+1"/>
+                </t>
             </t>
             <t t-if="widget.partner_ids.length > 3">
                 <span class="oe_more">, <a><t t-esc="widget.partner_ids.length - 3"/> others...</a></span>
@@ -151,7 +151,7 @@
             <t t-foreach='widget.recipients' t-as='recipient'>
                 <label t-attf-title="Add as recipient and follower (reason: #{recipient.reason})">
                     <input type="checkbox" t-att-checked="recipient.checked ? 'checked' : undefined" t-att-data="recipient.full_name"/>
-                    <t t-esc="recipient.name"/> 
+                    <t t-esc="recipient.name"/>
                     <t t-if="recipient.email_address">(<t t-esc="recipient.email_address"/>)</t>
                     <t t-if="!recipient.email_address">(no email address)</t>
                 </label>
@@ -162,7 +162,7 @@
         </div>
     </t>
 
-    <!-- 
+    <!--
         wall main template
         Template used to display the communication history in the wall.
         -->
@@ -335,6 +335,17 @@
             </div>
         </div>
     </t>
+
+    <!--
+    mail.compose_message.button_top_bar
+    render of the button on the user bar for open wizard compose message
+    -->
+    <t t-name="mail.ComposeMessageTopButton">
+        <li title='Compose new Message' class="oe_topbar_item oe_topbar_compose_full_email">
+            <button class="fa fa-envelope-o fa-fw"></button>
+        </li>
+    </t>
+
 
     <!-- mail.thread.message.vote
         Template used to display Like/Unlike in a mail.message
