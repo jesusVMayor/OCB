@@ -42,7 +42,7 @@ class res_partner_mail(osv.Model):
     }
 
     _defaults = {
-        'notify_email': lambda *args: 'always'
+        'notify_email': lambda *args: 'none'
     }
 
     def message_get_suggested_recipients(self, cr, uid, ids, context=None):
