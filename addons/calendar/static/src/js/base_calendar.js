@@ -4,7 +4,7 @@ openerp.calendar = function(instance) {
     var QWeb = instance.web.qweb;
 
     instance.calendar = {};
-    
+
 function reload_favorite_list(result) {
         var self = current = result;
         if (result.view) {
@@ -48,7 +48,7 @@ function reload_favorite_list(result) {
                     });
                     self.all_filters = sidebar_items;
                     self.now_filter_ids = $.map(self.all_filters, function(o) { return o.value; });
-                    
+
                     self.sidebar.filter.events_loaded(self.all_filters);
                     self.sidebar.filter.set_filters();
                     self.sidebar.filter.set_distroy_filters();
@@ -91,7 +91,7 @@ function reload_favorite_list(result) {
                     relation: "res.partner",
                 },
             });
-            this.ir_model_m2o = new instance.web.form.FieldMany2One(self.dfm, {
+            /*this.ir_model_m2o = new instance.web.form.FieldMany2One(self.dfm, {
                 attrs: {
                     class: 'oe_add_input_box',
                     name: "partner_id",
@@ -101,20 +101,20 @@ function reload_favorite_list(result) {
                 },
             });
             this.ir_model_m2o.insertAfter($('div.oe_calendar_filter'));
-            this.ir_model_m2o.on('change:value', self, function() { 
+            this.ir_model_m2o.on('change:value', self, function() {
                 self.add_filter();
-            });
+            });*/
         },
         add_filter: function() {
             var self = this;
-            new instance.web.Model("res.users").query(["partner_id"]).filter([["id", "=",this.view.dataset.context.uid]]).first().done(function(result){
+            /*new instance.web.Model("res.users").query(["partner_id"]).filter([["id", "=",this.view.dataset.context.uid]]).first().done(function(result){
                 $.map(self.ir_model_m2o.display_value, function(element,index) {
                     if (result.partner_id[0] != index){
                         self.ds_message = new instance.web.DataSetSearch(self, 'calendar.contacts');
                         self.ds_message.call("create", [{'partner_id': index}]);
                     }
                 });
-            });
+            });*/
             new reload_favorite_list(this);
         },
         destroy_filter: function(e) {
@@ -133,7 +133,7 @@ function reload_favorite_list(result) {
     });
 
     instance.web.WebClient = instance.web.WebClient.extend({
-        
+
 
         get_notif_box: function(me) {
             return $(me).closest(".ui-notify-message-style");
@@ -150,7 +150,7 @@ function reload_favorite_list(result) {
                                 res.title = QWeb.render('notify_title', {'title': res.title, 'id' : res.event_id});
                                 res.message += QWeb.render("notify_footer");
                                 a = self.do_notify(res.title,res.message,true);
-                                
+
                                 $(".link2event").on('click', function() {
                                     self.rpc("/web/action/load", {
                                         action_id: "calendar.action_calendar_event_notify",
@@ -190,19 +190,19 @@ function reload_favorite_list(result) {
                 self.get_next_notif();
             }, 5 * 60 * 1000 );
         },
-        
-        //Override the show_application of addons/web/static/src/js/chrome.js       
+
+        //Override the show_application of addons/web/static/src/js/chrome.js
         show_application: function() {
             this._super();
             this.check_notifications();
         },
-        //Override addons/web/static/src/js/chrome.js       
+        //Override addons/web/static/src/js/chrome.js
         on_logout: function() {
             this._super();
             clearInterval(self.intervalNotif);
         },
     });
-    
+
 
     instance.calendar.invitation = instance.web.Widget.extend({
 
@@ -230,7 +230,7 @@ function reload_favorite_list(result) {
             var action_url = '';
 
             action_url = _.str.sprintf('/web?db=%s#id=%s&view_type=form&model=calendar.event', db, meeting_id);
-            
+
             var reload_page = function(){
                 return location.replace(action_url);
             };
@@ -275,10 +275,10 @@ function reload_favorite_list(result) {
             new instance.calendar.invitation(null,db,action,id,view,attendee_data).appendTo($("body").addClass('openerp'));
         });
     };
-    
-    
-    
-    
-   
+
+
+
+
+
 };
 
