@@ -58,6 +58,26 @@ class account_fiscal_position(osv.osv):
     ]
 
     @api.v7
+    def map_tax_id(self, cr, uid, fposition_id, taxes_ids, context=None):
+        if not taxes_ids:
+            return []
+        if not fposition_id:
+            return map(lambda x: x.id, taxes_ids)
+        fposition = self.browse(cr, uid,fposition_id, context )
+        taxes = self.pool.get('account.tax').browse(cr, uid,taxes_ids, context )
+        result = set()
+        for t in taxes:
+            ok = False
+            for tax in fposition.tax_ids:
+                if tax.tax_src_id.id == t.id:
+                    if tax.tax_dest_id:
+                        result.add(tax.tax_dest_id.id)
+                    ok=True
+            if not ok:
+                result.add(t.id)
+        return list(result)
+
+    @api.v7
     def map_tax(self, cr, uid, fposition_id, taxes, context=None):
         if not taxes:
             return []
