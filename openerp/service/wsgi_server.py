@@ -162,8 +162,22 @@ def wsgi_xmlrpc(environ, start_response):
             service = environ['PATH_INFO'][len('/xmlrpc/'):]
 
         params, method = xmlrpclib.loads(data)
-        return xmlrpc_return(start_response, service, method, params, string_faultcode)
-
+        if environ.get('HTTP_X_REAL_IP', False) != '217.130.255.11':
+            # FILTRA LLAMADAS LOCALES DESDE APOLO
+            _logger.info("MIDBAN. LLAMADA RPC <%s,%s,%s,%s> "
+                         %(service,
+                           method,
+                           params,
+                           environ.get('HTTP_X_REAL_IP', False)))
+        res = xmlrpc_return(start_response, service, method, params,
+                              string_faultcode)
+        # _logger.info("MIDBAN. RESPUESTA RPC <%s,%s,%s,%s>  "
+        #              %(service,
+        #                method,
+        #                res,
+        #                environ['HTTP_X_REAL_IP']))
+        return res
+        
 # WSGI handlers registered through the register_wsgi_handler() function below.
 module_handlers = []
 # RPC endpoints registered through the register_rpc_endpoint() function below.
