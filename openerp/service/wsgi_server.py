@@ -162,8 +162,8 @@ def wsgi_xmlrpc(environ, start_response):
             service = environ['PATH_INFO'][len('/xmlrpc/'):]
 
         params, method = xmlrpclib.loads(data)
-        if environ.get('HTTP_X_REAL_IP', False) != '217.130.255.11':
-            # FILTRA LLAMADAS LOCALES DESDE APOLO
+        if environ.get('HTTP_X_REAL_IP', False):
+            # FILTRA LLAMADAS SIN IP DESDE APOLO
             _logger.info("MIDBAN. LLAMADA RPC <%s,%s,%s,%s> "
                          %(service,
                            method,
