@@ -21,6 +21,7 @@
 import datetime
 
 import openerp
+from openerp import api, models
 from openerp.osv import fields, osv
 
 class stock_production_lot(osv.osv):
@@ -75,6 +76,19 @@ class stock_production_lot(osv.osv):
     }
 
 
+# Onchange added in new api to avoid having to change views
+class StockProductionLot(models.Model):
+    _inherit = 'stock.production.lot'
+
+    @api.onchange('product_id')
+    def _onchange_product(self):
+        defaults = self.with_context(
+            product_id=self.product_id.id).default_get(
+                ['life_date', 'use_date', 'removal_date', 'alert_date'])
+        for field, value in defaults.items():
+            setattr(self, field, value)
+
+
 class stock_quant(osv.osv):
     _inherit = 'stock.quant'
 
@@ -91,7 +105,7 @@ class stock_quant(osv.osv):
 
     def apply_removal_strategy(self, cr, uid, location, product, qty, domain, removal_strategy, context=None):
         if removal_strategy == 'fefo':
-            order = 'removal_date, in_date, id'
+            order = 'removal_date, location_id, package_id, lot_id, in_date, id'
             return self._quants_get_order(cr, uid, location, product, qty, domain, order, context=context)
         return super(stock_quant, self).apply_removal_strategy(cr, uid, location, product, qty, domain, removal_strategy, context=context)
 

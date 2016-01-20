@@ -751,7 +751,7 @@ class mail_message(osv.Model):
         document_related_ids = []
         for model, doc_ids in model_record_ids.items():
             model_obj = self.pool[model]
-            mids = model_obj.exists(cr, uid, list(doc_ids))
+            mids = list(doc_ids)
             if hasattr(model_obj, 'check_mail_message_access'):
                 model_obj.check_mail_message_access(cr, uid, mids, operation, context=context)
             else:
@@ -848,7 +848,7 @@ class mail_message(osv.Model):
             Call mail_notification.notify to manage the email sending
         """
         notification_obj = self.pool.get('mail.notification')
-        message = self.browse(cr, uid, newid, context=context)
+        message = self.browse(cr, SUPERUSER_ID, newid, context=context)
         partners_to_notify = set([])
 
         # all followers of the mail.message document have to be added as partners and notified if a subtype is defined (otherwise: log message)

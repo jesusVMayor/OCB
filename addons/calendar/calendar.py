@@ -797,9 +797,9 @@ class calendar_event(osv.Model):
             time = _("AllDay , %s") % (event_date)
         elif zduration < 24:
             duration = date + timedelta(hours=zduration)
-            time = ("%s at (%s To %s) (%s)") % (event_date, display_time, duration.strftime(format_time), tz)
+            time = _("%s at (%s To %s) (%s)") % (event_date, display_time, duration.strftime(format_time), tz)
         else:
-            time = ("%s at %s To\n %s at %s (%s)") % (event_date, display_time, date_deadline.strftime(format_date), date_deadline.strftime(format_time), tz)
+            time = _("%s at %s To\n %s at %s (%s)") % (event_date, display_time, date_deadline.strftime(format_date), date_deadline.strftime(format_time), tz)
         return time
 
     def _compute(self, cr, uid, ids, fields, arg, context=None):
@@ -825,6 +825,11 @@ class calendar_event(osv.Model):
                     meeting_data[field] = meeting.stop_date if meeting.allday else meeting.stop_datetime
         return res
 
+    def _get_recurrent_fields(self, cr, uid, context=None):
+        return ['byday', 'recurrency', 'final_date', 'rrule_type', 'month_by',
+                'interval', 'count', 'end_type', 'mo', 'tu', 'we', 'th', 'fr', 'sa',
+                'su', 'day', 'week_list']
+
     def _get_rulestring(self, cr, uid, ids, name, arg, context=None):
         """
         Gets Recurrence rule string according to value type RECUR of iCalendar from the values given.
@@ -835,10 +840,8 @@ class calendar_event(osv.Model):
             ids = [ids]
 
         #read these fields as SUPERUSER because if the record is private a normal search could raise an error
-        events = self.read(cr, SUPERUSER_ID, ids,
-                           ['id', 'byday', 'recurrency', 'final_date', 'rrule_type', 'month_by',
-                            'interval', 'count', 'end_type', 'mo', 'tu', 'we', 'th', 'fr', 'sa',
-                            'su', 'day', 'week_list'], context=context)
+        recurrent_fields = self._get_recurrent_fields(cr, uid, context=context)
+        events = self.read(cr, SUPERUSER_ID, ids, recurrent_fields, context=context)
         for event in events:
             if event['recurrency']:
                 result[event['id']] = self.compute_rule_string(event)
@@ -1653,6 +1656,14 @@ class calendar_event(osv.Model):
 
         self.create_attendees(cr, uid, [res], context=context)
         return res
+
+    def export_data(self, cr, uid, ids, *args, **kwargs):
+        """ Override to convert virtual ids to ids """
+        real_ids = []
+        for real_id in get_real_ids(ids):
+            if real_id not in real_ids:
+                real_ids.append(real_id)
+        return super(calendar_event, self).export_data(cr, uid, real_ids, *args, **kwargs)
 
     def read_group(self, cr, uid, domain, fields, groupby, offset=0, limit=None, context=None, orderby=False, lazy=True):
         context = dict(context or {})

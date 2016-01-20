@@ -872,6 +872,7 @@
             <field name="priority">100</field>
             <field name="arch" type="xml">
                 <tree string="Account Tax Code" toolbar="1">
+                    <field name="sequence" widget="handle"/>
                     <field name="name"/>
                     <field name="code"/>
                     <field name="sum_period"/>
@@ -891,6 +892,7 @@
                             <field name="code"/>
                             <field name="parent_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="sequence"/>
                         </group>
                         <group string="Reporting Configuration">
                             <field name="notprintable"/>
@@ -1251,7 +1253,7 @@
                     <field name="move_id" string="Number (Move)"/>
                     <field name="account_id"/>
                     <field name="partner_id"/>
-                    <field name="journal_id" context="{'journal_id':self}" widget="selection"/> <!-- it's important to keep widget='selection' in this filter viewbecause without that the value passed in the context is not the ID but the textual value (name) of the selected journal -->
+                    <field name="journal_id" context="{'journal_name':self}" widget="selection"/> <!-- it's important to keep widget='selection' in this filter viewbecause without that the value passed in the context is not the ID but the textual value (name) of the selected journal -->
                     <field name="period_id" context="{'period_id':self}" widget="selection"/> <!-- it's important to keep the widget='selection' in this field, for the same reason as explained above -->
                     <group expand="0" string="Group By">
                         <filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
@@ -2147,6 +2149,7 @@
             <field name="field_parent">child_ids</field>
             <field name="arch" type="xml">
                 <tree string="Account Tax Code Template" toolbar="1">
+                    <field name="sequence" widget="handle"/>
                     <field name="name"/>
                     <field name="code"/>
                     <field name="parent_id" invisible="1"/>
@@ -2176,6 +2179,7 @@
                         <field name="code"/>
                         <field name="parent_id"/>
                         <field name="sign"/>
+                        <field name="sequence"/>
                     </group>
                     <separator string="Description"/>
                     <field name="info"/>
