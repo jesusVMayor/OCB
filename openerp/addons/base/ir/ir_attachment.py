@@ -40,12 +40,12 @@ class ir_attachment(osv.osv):
 
     External attachment storage
     ---------------------------
-    
+
     The 'data' function field (_data_get,data_set) is implemented using
     _file_read, _file_write and _file_delete which can be overridden to
     implement other storage engines, shuch methods should check for other
     location pseudo uri (example: hdfs://hadoppserver)
-    
+
     The default implementation is the file:dirname location that stores files
     on the local filesystem using name based on their sha1 hash
     """
@@ -62,7 +62,7 @@ class ir_attachment(osv.osv):
                 if res_name:
                     field = self._columns.get('res_name',False)
                     if field and len(res_name) > field.size:
-                        res_name = res_name[:30] + '...' 
+                        res_name = res_name[:30] + '...'
                 data[attachment.id] = res_name or False
             else:
                 data[attachment.id] = False
@@ -301,7 +301,7 @@ class ir_attachment(osv.osv):
 
             # filter ids according to what access rules permit
             target_ids = targets.keys()
-            allowed_ids = [0] + self.pool[model].search(cr, uid, [('id', 'in', target_ids)], context=context)
+            allowed_ids = [0] + self.pool[model].search(cr, uid, [('id', 'in', target_ids), '|', ('active', '=', False), ('active', '=', True)], context=context)
             disallowed_ids = set(target_ids).difference(allowed_ids)
             for res_id in disallowed_ids:
                 for attach_id in targets[res_id]:
