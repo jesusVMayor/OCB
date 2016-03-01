@@ -18,6 +18,12 @@
   font-weight: normal;
   font-style: normal;
 }
+.openerp .nav-pills > li.active > a, .openerp a.list-group-item.active > a {
+  background-color: #6c727c !important;
+  color: white;
+  border-radius: 0;
+  padding-bottom: 6px !important;
+}
 #oe_main_menu_navbar {
   min-height: 34px;
   z-index: 1001;
@@ -25,7 +31,8 @@
 }
 #oe_main_menu_navbar li a, #oe_main_menu_navbar li button {
   padding: 4px 8px 4px 8px;
-  margin-top: 2px;
+  margin-top: 5px;
+  margin-bottom: 3px;
   font-size: 13px;
 }
 #oe_main_menu_navbar .oe_topbar_avatar {
@@ -35,6 +42,9 @@
 
 #oe_main_menu_navbar.navbar {
   margin-bottom: 0px;
+  background-color: #09b29b;
+  border-bottom: none;
+  border-top: none;
 }
 
 .oe_systray {
@@ -68,10 +78,11 @@
 .navbar .oe_topbar_name {
   max-width: 150px;
   display: inline-block;
-  height: 15px;
+  height: 20px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  margin-bottom: -5px;
 }
 
 .openerp {
@@ -111,6 +122,7 @@
 .openerp a {
   text-decoration: none;
   cursor: pointer !important;
+  color: #18A589;
 }
 .openerp table {
   padding: 0;
@@ -175,9 +187,9 @@
 .openerp input, .openerp textarea, .openerp select {
   padding: 2px 4px;
   border: 1px solid #ccc;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
   background: white;
 }
 .openerp img {
@@ -190,62 +202,29 @@
 }
 .openerp a.button:link, .openerp a.button:visited, .openerp button, .openerp .oe_button, .openerp input[type='submit'] {
   display: inline-block;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  color: #4c4c4c;
+  border: none;
+  color: #FFF;
   margin: 0;
   padding: 3px 12px;
-  font-size: 13px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  font-size: 12px;
   text-align: center;
-  background-color: #e3e3e3;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#efefef), to(#d8d8d8));
-  background-image: -webkit-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: -moz-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: -ms-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: -o-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: linear-gradient(to bottom, #efefef, #d8d8d8);
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
-  -webkit-font-smoothing: antialiased;
+  background-color: #18a589;
   outline: none;
 }
 .openerp a.button:hover, .openerp button:hover, .openerp .oe_button:hover, .openerp input[type='submit']:hover {
-  background-color: #ececec;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#e3e3e3));
-  background-image: -webkit-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: -moz-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: -ms-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: -o-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: linear-gradient(to bottom, #f6f6f6, #e3e3e3);
+  background-color: #0a7b66;
   cursor: pointer;
   background-position: 0;
+  color: #FFF;
 }
 .openerp a.button:focus, .openerp button:focus, .openerp .oe_button:focus, .openerp input[type='submit']:focus {
-  border: 1px solid #80bfff;
+  background-color: #0a7b66;
   background-position: 0;
-  background-color: #ececec;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#e3e3e3));
-  background-image: -webkit-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: -moz-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: -ms-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: -o-linear-gradient(top, #f6f6f6, #e3e3e3);
-  background-image: linear-gradient(to bottom, #f6f6f6, #e3e3e3);
-  -moz-box-shadow: 0 0 3px #80bfff, 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 0 3px #80bfff, 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 0 3px #80bfff, 0 1px 1px rgba(255, 255, 255, 0.8) inset;
 }
 .openerp a.button:active, .openerp a.button.active, .openerp button:active, .openerp .oe_button:active, .openerp .oe_button.active, .openerp input[type='submit']:active, .openerp input[type='submit'].active {
-  background-color: #ececec;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f6f6f6));
-  background-image: -webkit-linear-gradient(top, #e3e3e3, #f6f6f6);
-  background-image: -moz-linear-gradient(top, #e3e3e3, #f6f6f6);
-  background-image: -ms-linear-gradient(top, #e3e3e3, #f6f6f6);
-  background-image: -o-linear-gradient(top, #e3e3e3, #f6f6f6);
-  background-image: linear-gradient(to bottom, #e3e3e3, #f6f6f6);
+  background-color: #0a7b66;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
@@ -323,34 +302,13 @@
   background: #DC5F59;
 }
 .openerp button.oe_highlight {
-  background-color: #c02c2c;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#df3f3f), to(#a21a1a));
-  background-image: -webkit-linear-gradient(top, #df3f3f, #a21a1a);
-  background-image: -moz-linear-gradient(top, #df3f3f, #a21a1a);
-  background-image: -ms-linear-gradient(top, #df3f3f, #a21a1a);
-  background-image: -o-linear-gradient(top, #df3f3f, #a21a1a);
-  background-image: linear-gradient(to bottom, #df3f3f, #a21a1a);
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
+  background-color: #18a589;
 }
 .openerp button.oe_highlight:hover {
-  background-color: #c63939;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#e25858), to(#ab1b1b));
-  background-image: -webkit-linear-gradient(top, #e25858, #ab1b1b);
-  background-image: -moz-linear-gradient(top, #e25858, #ab1b1b);
-  background-image: -ms-linear-gradient(top, #e25858, #ab1b1b);
-  background-image: -o-linear-gradient(top, #e25858, #ab1b1b);
-  background-image: linear-gradient(to bottom, #e25858, #ab1b1b);
+  background-color: #0a7b66;
 }
 .openerp button.oe_highlight:active {
-  background-color: #cb2121;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#c52020), to(#d22323));
-  background-image: -webkit-linear-gradient(top, #c52020, #d22323);
-  background-image: -moz-linear-gradient(top, #c52020, #d22323);
-  background-image: -ms-linear-gradient(top, #c52020, #d22323);
-  background-image: -o-linear-gradient(top, #c52020, #d22323);
-  background-image: linear-gradient(to bottom, #c52020, #d22323);
+  background-color: #18a589;
 }
 .openerp .oe_background_grey {
   background: #eee !important;
@@ -440,12 +398,6 @@
 .openerp .oe_avatar > img {
   max-height: 90px;
   max-width: 90px;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   border: none;
   margin-bottom: 10px;
 }
@@ -593,6 +545,8 @@
   vertical-align: top;
   border-radius: 10px;
   margin: 1px 0;
+  margin-right: 5px;
+  margin-top: -3px;
 }
 .openerp .oe_form_field_radio.oe_form_required.oe_form_invalid .oe_radio_input {
   border-color: red;
@@ -696,7 +650,8 @@
   cursor: pointer;
 }
 .openerp .oe_dropdown_toggle {
-  color: #2B2B2B;
+  font-weight: normal;
+  color: rgba(252, 252, 252, 0.68);
   font-weight: normal;
 }
 .openerp .oe_dropdown_hover:hover .oe_dropdown_menu, .openerp .oe_dropdown_menu.oe_opened {
@@ -707,17 +662,11 @@
   position: absolute;
   z-index: 3;
   margin: 0;
-  border: 1px solid #afafb6;
+  border: 1px solid #DDDDE0;
   background: white;
   padding: 4px 0;
   min-width: 140px;
   text-align: left;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 .openerp .oe_dropdown_menu > li {
   list-style-type: none;
@@ -817,11 +766,11 @@
   position: fixed;
   top: 0;
   right: 50%;
-  padding: 4px 12px;
-  background: #A61300;
+  padding: 4px 4px;
+  background: #0a7b66;
   color: white;
   text-align: center;
-  border: 1px solid #900;
+  border: none;
   border-top: none;
   -moz-border-radius-bottomright: 8px;
   -moz-border-radius-bottomleft: 8px;
@@ -861,8 +810,7 @@
 .openerp .oe_leftbar {
   display: none;
   width: 220px;
-  background: #f0eeee;
-  border-right: 1px solid #afafb6;
+  background: #ebeced;
   text-shadow: none;
 }
 .openerp .oe_leftbar > div {
@@ -917,6 +865,7 @@
 .openerp .oe_leftbar > div .oe_footer {
   background: #f0eeee;
   text-align: center;
+  display: none;
 }
 .openerp .oe_leftbar > div .oe_footer a {
   font-weight: bold;
@@ -928,7 +877,7 @@
 .openerp .oe_secondary_menu_section {
   font-weight: bold;
   margin-left: 8px;
-  color: #7C7BAD;
+  color: #7C7BAD !important;
 }
 .openerp .oe_secondary_submenu {
   margin-bottom: 10px !important;
@@ -1051,7 +1000,7 @@
   height: 100%;
 }
 .openerp .oe_application a {
-  color: #7C7BAD;
+  color: #008c79;
 }
 .openerp .oe_application > div {
   position: relative;
@@ -1120,10 +1069,11 @@
   line-height: 26px;
 }
 .openerp .oe_view_manager table.oe_view_manager_header h2 {
-  font-size: 18px;
+  font-size: 16px;
   margin: 0;
   float: left;
   line-height: 30px;
+  font-weight: normal;
 }
 .openerp .oe_view_manager table.oe_view_manager_header h2 a {
   color: #7C7BAD;
@@ -1133,10 +1083,7 @@
 }
 .openerp .oe_view_manager table.oe_view_manager_header .oe_button_group {
   display: inline-block;
-  border: 1px solid #ababab;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  border: 1px solid #D7D7D7;
 }
 .openerp .oe_view_manager table.oe_view_manager_header .oe_button_group li {
   float: left;
@@ -1153,12 +1100,9 @@
 }
 .openerp .oe_view_manager table.oe_view_manager_header .oe_button_group .active {
   background: #999;
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) inset;
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) inset;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) inset;
 }
 .openerp .oe_view_manager table.oe_view_manager_header .oe_button_group .active a {
-  color: #fff;
+  color: #fff !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .openerp .oe_view_manager table.oe_view_manager_header .oe_view_manager_buttons {
@@ -1228,7 +1172,6 @@
   height: 24px;
   line-height: 24px;
   display: inline-block;
-  border: 1px solid #ababab;
   cursor: pointer;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -1270,17 +1213,19 @@
   height: 100%;
 }
 .openerp .oe_view_manager_current > .oe_view_manager_header {
-  border-bottom: 1px solid #cacaca;
-  background-color: #ededed;
+  
+  background-color: #f8f8f8;
+  /* background-color: #ededed;
+  border-bottom: 1px solid #d6d6d6;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#dedede));
   background-image: -webkit-linear-gradient(top, #fcfcfc, #dedede);
   background-image: -moz-linear-gradient(top, #fcfcfc, #dedede);
   background-image: -ms-linear-gradient(top, #fcfcfc, #dedede);
   background-image: -o-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: linear-gradient(to bottom, #fcfcfc, #dedede);
+  background-image: linear-gradient(to bottom, #fcfcfc, #dedede); 
   -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);*/
 }
 .openerp .oe_view_manager_current > .oe_view_manager_header .oe_header_row td {
   padding: 8px;
@@ -1313,14 +1258,8 @@
   padding: 1px 0;
   line-height: 18px;
   min-width: 400px;
-  border: 1px solid #ababab;
+  border: 1px solid #E3E3E3;
   background: white;
-  -moz-border-radius: 13px;
-  -webkit-border-radius: 13px;
-  border-radius: 13px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
 }
 .openerp .oe_searchview input, .openerp .oe_searchview textarea {
   padding: 3px;
@@ -1799,15 +1738,6 @@
 }
 .openerp .oe_view_manager_current .oe_form_editable button.oe_highlight {
   background-color: #e3e3e3;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#efefef), to(#d8d8d8));
-  background-image: -webkit-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: -moz-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: -ms-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: -o-linear-gradient(top, #efefef, #d8d8d8);
-  background-image: linear-gradient(to bottom, #efefef, #d8d8d8);
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.8) inset;
 }
 .openerp .oe_view_manager_current .oe_form_editable button.oe_highlight:active {
   background-color: #ececec;
@@ -1884,7 +1814,6 @@
   overflow-x: auto;
 }
 .openerp .oe_application .oe_form_sheetbg {
-  background: url(/web/static/src/img/form_sheetbg.png);
   border-bottom: 1px solid #ddd;
 }
 .openerp .oe_application .oe_form_sheetbg .oe_subtotal_footer label {
@@ -1895,9 +1824,6 @@
 }
 .openerp .oe_application .oe_form_sheet {
   border: 1px solid #c8c8d3;
-  -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 .openerp .oe_application .oe_form_sheet .ui-tabs {
   margin: 0 -16px;
@@ -1914,20 +1840,16 @@
 }
 .openerp .oe_form > :not(.oe_form_nosheet) header .oe_button, .openerp .oe_form > .oe_form_nosheet header .oe_button {
   margin: 3px 2px 1px;
+  height: 30px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 .openerp .oe_form > :not(.oe_form_nosheet) header .oe_button:first-child, .openerp .oe_form > .oe_form_nosheet header .oe_button:first-child {
   margin-left: 6px;
 }
 .openerp .oe_form header {
-  border-bottom: 1px solid #cacaca;
   padding-left: 2px;
-  background-color: #ededed;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#dedede));
-  background-image: -webkit-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: -moz-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: -ms-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: -o-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: linear-gradient(to bottom, #fcfcfc, #dedede);
+  background-color: #d2d3d6;
 }
 .openerp .oe_form header > span {
   margin-left: 4px;
@@ -2084,6 +2006,7 @@
 }
 .openerp .oe_form .oe_form_field_text {
   width: 100%;
+  margin-right: 3px;
 }
 .openerp .oe_form .oe_form_field_text .oe_form_text_content {
   text-overflow: ellipsis;
@@ -2114,7 +2037,7 @@
 }
 .openerp .oe_form .oe_title h1, .openerp .oe_form h1 {
   font-weight: bold;
-  font-size: 2em;
+  font-size: 20px;
 }
 .openerp .oe_form h2 {
   font-size: 1.5em;
@@ -2127,12 +2050,13 @@
 .openerp .oe_form .oe_form_field {
   width: 100%;
   display: inline-block;
-  padding: 2px 2px 2px 0px;
+  /*padding: 2px 2px 2px 0px; */
   vertical-align: top;
+  margin-top: 0px;
 }
 .openerp .oe_form .oe_form_field input {
   margin: 0px;
-}
+}d
 .openerp .oe_form input[type="text"], .openerp .oe_form input[type="password"], .openerp .oe_form input[type="file"], .openerp .oe_form select {
   height: 22px;
   padding-top: 2px;
@@ -2183,7 +2107,7 @@
   display: inline-block;
 }
 .openerp .oe_form .oe_form_required input:not([disabled]):not([readonly]), .openerp .oe_form .oe_form_required select:not([disabled]):not([readonly]), .openerp .oe_form .oe_form_required textarea:not([disabled]):not([readonly]) {
-  background-color: #D2D2FF !important;
+  background-color: rgba(9, 178, 118, 0.11) !important;
 }
 .openerp .oe_form .oe_form_invalid input, .openerp .oe_form .oe_form_invalid select, .openerp .oe_form .oe_form_invalid textarea {
   background-color: #F66 !important;
@@ -2402,12 +2326,6 @@
   margin: 0 -18px 0 0;
   padding: 0;
   background-color: #ededed;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#dedede));
-  background-image: -webkit-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: -moz-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: -ms-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: -o-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: linear-gradient(to bottom, #fcfcfc, #dedede);
 }
 .openerp ul.oe_form_status li:first-child > .label, .openerp ul.oe_form_status_clickable li:first-child > .label {
   border-left: 1px solid #cacaca;
@@ -2424,7 +2342,6 @@
 }
 .openerp ul.oe_form_status li > .label, .openerp ul.oe_form_status_clickable li > .label {
   color: #4c4c4c;
-  text-shadow: 0 1px 1px #fcfcfc, 0 -1px 1px #dedede;
   padding: 7px;
   display: inline-block;
   padding-left: 24px;
@@ -2441,23 +2358,15 @@
   vertical-align: top;
   overflow: hidden;
   margin-left: -5px;
+  background: none !important;
 }
 .openerp ul.oe_form_status li > .arrow span, .openerp ul.oe_form_status_clickable li > .arrow span {
   position: relative;
-  width: 24px;
-  height: 24px;
   display: inline-block;
   margin-left: -12px;
   margin-top: 3px;
-  box-shadow: -1px 1px 2px rgba(255, 255, 255, 0.2), inset -1px 1px 1px rgba(0, 0, 0, 0.2);
-  background-color: #dedede;
-  background: -moz-linear-gradient(135deg, #dedede, #fcfcfc);
-  background: -o-linear-gradient(135deg, #fcfcfc, #dedede);
-  background: -webkit-gradient(linear, left top, right bottom, from(#fcfcfc), to(#dedede));
-  background: -ms-linear-gradient(top, #fcfcfc, #dedede);
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  border: 1px solid #ccc;
+  background-color: #CACACA;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -2480,13 +2389,7 @@
   padding-left: 14px;
 }
 .openerp ul.oe_form_status li.oe_active, .openerp ul.oe_form_status_clickable li.oe_active {
-  background-color: #5382b9;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#729fcf), to(#3465a4));
-  background-image: -webkit-linear-gradient(top, #729fcf, #3465a4);
-  background-image: -moz-linear-gradient(top, #729fcf, #3465a4);
-  background-image: -ms-linear-gradient(top, #729fcf, #3465a4);
-  background-image: -o-linear-gradient(top, #729fcf, #3465a4);
-  background-image: linear-gradient(to bottom, #729fcf, #3465a4);
+  background-color: #245C9E;
 }
 .openerp ul.oe_form_status li.oe_active > .arrow span, .openerp ul.oe_form_status_clickable li.oe_active > .arrow span {
   background-color: #3465a4;
@@ -2727,8 +2630,8 @@
   vertical-align: top;
 }
 .openerp .oe_list_content td, .openerp .oe_list_content th {
-  padding: 3px 6px;
-  line-height: 18px;
+  padding: 6px 6px;
+  line-height: 20px;
 }
 .openerp .oe_list_content th.oe_sortable, .openerp .oe_list_content th.oe_sortable div {
   cursor: pointer;
@@ -2803,17 +2706,11 @@
   opacity: 1;
 }
 .openerp .oe_list_content > tbody > tr:nth-child(odd) {
-  background-color: #f0f0fa;
-  background-color: #efeff8;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f0fa), to(#eeeef6));
-  background-image: -webkit-linear-gradient(top, #f0f0fa, #eeeef6);
-  background-image: -moz-linear-gradient(top, #f0f0fa, #eeeef6);
-  background-image: -ms-linear-gradient(top, #f0f0fa, #eeeef6);
-  background-image: -o-linear-gradient(top, #f0f0fa, #eeeef6);
-  background-image: linear-gradient(to bottom, #f0f0fa, #eeeef6);
+  background-color: #F4F8F6;
+
 }
 .openerp .oe_list_content > tfoot {
-  border-top: 2px solid #cacaca;
+  border-top: 1px solid #cacaca;
   border-bottom: 1px solid #cacaca;
   background: #eee;
   font-weight: bold;
@@ -2966,29 +2863,25 @@
   font-weight: normal;
 }
 .openerp .nav-pills li > a {
-  padding: 6px 4px 2px 18px;
+  padding: 6px 4px 6px 18px;
   color: #4c4c4c;
 }
 .openerp .nav-pills .nav-stacked > li > ul {
   padding-left: 16px;
 }
-.openerp .nav-pills > li.active > a, .openerp a.list-group-item.active > a {
-  background-color: #7c7bad;
-  color: white;
-  border-radius: 0;
-}
+
 .openerp .nav-pills > li.active a:hover, .openerp .nav-pills > li.active a:focus, .openerp a.list-group-item.active a:hover, .openerp a.list-group-item.active a:focus {
   background-color: #7c7bad;
 }
 .openerp .nav-pills > li.active .badge, .openerp a.list-group-item.active .badge {
   background-color: white;
-  color: #7c7bad;
+  color: #444847;
   text-shadow: none;
 }
 .openerp .badge {
   font-weight: normal;
   font-size: 11px;
-  background-color: #7c7bad;
+  background-color: #8FD33C;
 }
 .openerp button, .openerp body {
   line-height: normal;
@@ -3457,3 +3350,108 @@ body {
     position: static !important;
   }
 }
+
+/** ESTILOS **/
+
+.navbar-inverse .navbar-nav > li > a { font-weight: bold; color: #fff; height: 30px; }
+.navbar-inverse .navbar-nav > .active > a { background-color:#008c79;}
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    color: #FFF;
+    background-color: #008c79;
+}
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus{
+  background-color: #006154;
+  outline: none;
+  outline-style: none;
+}
+.test-ribbon { opacity: 0 !important;}
+.ui-datepicker td .ui-state-hover { background-color: #1A64BB !important; color: #FFF !important; }
+
+.ui-datepicker td .ui-state-active{
+  background:#BFBFBF;
+  margin-bottom:0px;
+  font-size:normal;
+  text-shadow: 0px;
+  color: #ffffff;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #FFF !important;
+}
+
+.ui-datepicker td .ui-state-hover {
+    color: #ffffff;
+    background-color: #8C8D8D;
+    background-image: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+    border-color: none !important;
+    border-color: none !important;
+    -webkit-border-radius: none !important;
+    -moz-border-radius: none !important;
+    -khtml-border-radius: none !important;
+    border-radius: none !important;
+}
+.cleditorToolbar {
+    background: #ECECEC !important;
+}
+.cleditorMain {
+    border: 1px solid #FFF !important;
+}
+.modal-content {
+    position: relative;
+    background-color: #FFF;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0px !important;
+    outline: 0px none !important;
+    box-shadow:none !important;
+}
+
+.form-control:focus {
+    border-color: #43920D !important;
+    outline: 0px none !important;
+    box-shadow: none !important;
+}
+
+.ui-datepicker {
+    width: 18em !important;
+    padding: 0.2em 0.2em 0px;
+    display: none;
+}
+
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br { border-bottom-right-radius: 0px !important; }
+.ui-corner-all, .ui-corner-bottom, .ui-corner-left, .ui-corner-bl { border-bottom-left-radius: 0px !important; }
+.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr { border-top-right-radius: 0px !important; }
+.ui-corner-all, .ui-corner-top, .ui-corner-left, .ui-corner-tl { border-top-left-radius: 0px !important;}
+
+.modal-content { box-shadow: none !important; }
+.oe_single_form_footer { display: none; }
+.oe_single_form_logo img { display: none; }
+.oe_single_form_logo { background-image: url("/web/static/src/img/logo-milkoop.png"); background-repeat: no-repeat; height: 70px; background-position: top center;  }
+.oe_logo { background-image: url("/web/static/src/img/logo-milkoop-min.png"); background-repeat: no-repeat; height: 70px; background-position: top center; margin-top: 20px;  }
+.btn-primary {
+    color: #FFF;
+    background-color: #0A7B66 !important;
+    border-color: #0A7B66 !important;
+}
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 0px !important;
+}
+.form-control { border-radius: 0px !important; }
+.ui-menu .ui-menu-item a.ui-state-focus { background: #AEDFAC !important; text-shadow: none; }
+
+

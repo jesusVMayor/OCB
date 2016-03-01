@@ -19,12 +19,12 @@
     box-shadow: none;
     color: white;
     background: none;
-    text-shadow: 0px 1px 2px black;
     width: 32px;
     height: 32px;
     padding: 0px;
     margin: 0px
     border-radius: 0px;
+    font-size: 16px !important;
 }
 
 
@@ -47,11 +47,12 @@
 
 .openerp .oe_mail .oe_msg{
     position: relative;
-    background: #EDEDF6;
-    border-radius: 2px;
-    margin-bottom: 2px;
+    background: #f8f8f8;
+    border-radius: 0px;
+    margin-bottom: 0px;
     min-height: 42px;
-    border: solid 1px rgba(0,0,0,0.03);
+    border: solid 3px #FFF;
+    padding: 2px;
 }
 .openerp .oe_mail .oe_msg.oe_msg_nobody{
     background: #E4E4E4;
@@ -63,6 +64,7 @@
     position: absolute;
     left:0; top: 0; bottom: 0; width: 40px;
     overflow: hidden;
+    padding: 3px;
 }
 .openerp .oe_mail .oe_msg .oe_msg_left a,
 .openerp .oe_mail .oe_msg .oe_msg_left img{
@@ -90,10 +92,16 @@
     padding-bottom:1px;
 }
 .openerp .oe_mail .oe_msg .oe_msg_content .oe_msg_title{
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 0px;
     margin-top: 2px;
+    color: #000 !important;
 }
+
+.openerp .oe_mail .oe_msg .oe_msg_content .oe_msg_title a{
+    color: #000 !important;
+}
+
 .openerp .oe_mail .oe_msg .oe_msg_content .oe_msg_body p:first-of-type {
     margin-top: 0px;
 }
@@ -179,12 +187,12 @@
 }
 .openerp .oe_mail .oe_msg .oe_msg_icons a {
     text-decoration: none;
-    color: #FFF;
-    text-shadow: 0px 1px #AAA,0px -1px #AAA, -1px 0px #AAA, 1px 0px #AAA, 0px 3px 3px rgba(0,0,0,0.1);
+    color: #ABABA1;
+    /*text-shadow: 0px 1px #AAA,0px -1px #AAA, -1px 0px #AAA, 1px 0px #AAA, 0px 3px 3px rgba(0,0,0,0.1);
     -webkit-transition: all 0.2s linear;
        -moz-transition: all 0.2s linear;
          -o-transition: all 0.2s linear;
-            transition: all 0.2s linear;
+            transition: all 0.2s linear; */
 }
 .openerp .oe_mail .oe_msg:hover .oe_msg_icons a{
     opacity: 1;
@@ -194,24 +202,19 @@
             transition: all 0.1s linear;
 }
 .openerp .oe_mail .oe_msg .oe_msg_icons .oe_star:hover a{
-    color: #FFF670;
-    text-shadow: 0px 1px #FFA162,0px -1px #FFA162, -1px 0px #FFA162, 1px 0px #FFA162, 0px 3px 3px rgba(0,0,0,0.1);
+    color: #006154;
 }
 .openerp .oe_mail .oe_msg .oe_msg_icons .oe_star.oe_starred a{
     color: #FFE41F;
-    text-shadow: 0px 1px #DF6200,0px -1px #DF6200, -1px 0px #DF6200, 1px 0px #DF6200, 0px 3px 3px rgba(0,0,0,0.1);
 }
 .openerp .oe_mail .oe_msg .oe_msg_icons .oe_reply:hover a{
     color: #1fc0ff;
-    text-shadow: 0px 1px #184fc5,0px -1px #184fc5, -1px 0px #184fc5, 1px 0px #184fc5, 0px 3px 3px rgba(0,0,0,0.1);
 }
 .openerp .oe_mail .oe_msg .oe_msg_icons .oe_read:hover a{
     color: #bbbaff;
-    text-shadow: 0px 1px #7c7bad,0px -1px #7c7bad, -1px 0px #7c7bad, 1px 0px #7c7bad, 0px 3px 3px rgba(0,0,0,0.1);
 }
 .openerp .oe_mail .oe_msg .oe_msg_icons .oe_unread:hover a{
     color: #c2ff00;
-    text-shadow: 0px 1px #009441,0px -1px #009441, -1px 0px #009441, 1px 0px #009441, 0px 3px 3px rgba(0,0,0,0.1);
 }
 .openerp .oe_mail .oe_msg .oe_msg_content textarea{
     width: 100%;
@@ -566,22 +569,12 @@
 }
 .openerp .oe_followers button.oe_follower.oe_following{
     color: white;
-    background-color: #3465A4;
-    background-image: -webkit-linear-gradient(top, #729FCF, #3465A4);
-    background-image:    -moz-linear-gradient(top, #729FCF, #3465A4);
-    background-image:     -ms-linear-gradient(top, #729FCF, #3465A4);
-    background-image:      -o-linear-gradient(top, #729FCF, #3465A4);
-    background-image:         linear-gradient(to bottom, #729FCF, #3465A4);
+    background-color: #75d4c1;
 }
 .openerp .oe_followers button.oe_follower.oe_following:hover{
     color: white;
     filter:none;
-    background-color: #A21A1A;
-    background-image: -webkit-linear-gradient(top, #DF3F3F, #A21A1A);
-    background-image:    -moz-linear-gradient(top, #DF3F3F, #A21A1A);
-    background-image:     -ms-linear-gradient(top, #DF3F3F, #A21A1A);
-    background-image:      -o-linear-gradient(top, #DF3F3F, #A21A1A);
-    background-image:         linear-gradient(to bottom, #DF3F3F, #A21A1A);
+    background-color: #18a589;
 }
 
 .openerp .oe_followers button.oe_follower .oe_follow,
@@ -744,3 +737,6 @@
     margin-bottom: 10px;
 }
 
+.oe_topbar_name .caret {
+    margin-top: -9px !important;
+}
