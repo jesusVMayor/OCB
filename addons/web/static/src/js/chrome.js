@@ -231,7 +231,7 @@ instance.web.Dialog = instance.web.Widget.extend({
                 if (opened_modal.length > 0){
                     //we still have other opened modal so we should focus it
                     opened_modal[opened_modal.length-1].focus();
-                    //keep class modal-open (deleted by bootstrap hide fnct) on body 
+                    //keep class modal-open (deleted by bootstrap hide fnct) on body
                     //to allow scrolling inside the modal
                     $('body').addClass('modal-open');
                 }
@@ -825,7 +825,7 @@ instance.web.Menu =  instance.web.Widget.extend({
      * Automatically called when 'menu_bound' event is triggered and on window resizing.
      *
      * @param {string} behavior If set to 'all_outside', all the items are displayed. If set to
-     * 'all_inside', all the items are hidden under the more item. If not set, only the 
+     * 'all_inside', all the items are hidden under the more item. If not set, only the
      * overflowing items are hidden.
      */
     reflow: function(behavior) {
@@ -835,7 +835,7 @@ instance.web.Menu =  instance.web.Widget.extend({
         var $systray = this.$el.parents().find('.oe_systray');
 
         $more.children('li').insertBefore($more_container);  // Pull all the items out of the more menu
-        
+
         // 'all_outside' beahavior should display all the items, so hide the more menu and exit
         if (behavior === 'all_outside') {
             this.$el.find('li').show();
@@ -1294,9 +1294,9 @@ instance.web.WebClient = instance.web.Client.extend({
         }
     },
     update_logo: function() {
-        var company = this.session.company_id;
-        var img = this.session.url('/web/binary/company_logo' + '?db=' + this.session.db + (company ? '&company=' + company : ''));
-        this.$('.oe_logo img').attr('src', '').attr('src', img);
+        // var company = this.session.company_id;
+        // var img = this.session.url('/web/binary/company_logo' + '?db=' + this.session.db + (company ? '&company=' + company : ''));
+        // this.$('.oe_logo img').attr('src', '').attr('src', img);
         this.$('.oe_logo_edit').toggleClass('oe_logo_edit_admin', this.session.uid === 1);
     },
     logo_edit: function(ev) {
@@ -1537,7 +1537,7 @@ instance.web.embed = function (origin, dbname, login, key, action, options) {
 
 
 
-/* 
+/*
  * The Android/iPhone App is a JS/HTML app that launches the
  * Odoo webclient in an iframe, using the Cordova framework.
  *
@@ -1569,7 +1569,7 @@ instance.web.Cordova = instance.web.Class.extend({}, instance.web.PropertiesMixi
     receive: function(event) {
         if (event.origin !== 'file://') {
             return;
-        } 
+        }
 
         if (typeof event.data === 'string') {
             this.trigger(event.data);

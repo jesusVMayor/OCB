@@ -151,7 +151,7 @@
         <template id="web.menu_secondary">
             <a class="oe_logo" t-att-href="'/web/?debug' if debug else '/web'">
                 <span class="oe_logo_edit">Edit Company data</span>
-                <!--<img src='/web/binary/company_logo'/>-->
+                <img src='/web/static/src/img/logo-milkoop-min.png'/>
             </a>
             <div>
                 <div>
@@ -221,7 +221,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
-                        </button>    
+                        </button>
                     </div>
                     <div class="navbar-collapse collapse" id="oe_main_menu_placeholder">
                         <t t-call="web.menu"/>

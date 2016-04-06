@@ -1213,7 +1213,7 @@
   height: 100%;
 }
 .openerp .oe_view_manager_current > .oe_view_manager_header {
-  
+
   background-color: #f8f8f8;
   /* background-color: #ededed;
   border-bottom: 1px solid #d6d6d6;
@@ -1222,7 +1222,7 @@
   background-image: -moz-linear-gradient(top, #fcfcfc, #dedede);
   background-image: -ms-linear-gradient(top, #fcfcfc, #dedede);
   background-image: -o-linear-gradient(top, #fcfcfc, #dedede);
-  background-image: linear-gradient(to bottom, #fcfcfc, #dedede); 
+  background-image: linear-gradient(to bottom, #fcfcfc, #dedede);
   -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);*/
@@ -3429,7 +3429,6 @@ body {
 .oe_single_form_footer { display: none; }
 .oe_single_form_logo img { display: none; }
 .oe_single_form_logo { background-image: url("/web/static/src/img/logo-milkoop.png"); background-repeat: no-repeat; height: 70px; background-position: top center;  }
-.oe_logo { background-image: url("/web/static/src/img/logo-milkoop-min.png"); background-repeat: no-repeat; height: 70px; background-position: top center; margin-top: 20px;  }
 .btn-primary {
     color: #FFF;
     background-color: #0A7B66 !important;
@@ -3453,5 +3452,3 @@ body {
 }
 .form-control { border-radius: 0px !important; }
 .ui-menu .ui-menu-item a.ui-state-focus { background: #AEDFAC !important; text-shadow: none; }
-
-
