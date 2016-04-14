@@ -1530,15 +1530,15 @@ class procurement_order(osv.osv):
                         new_qty, new_price = self._calc_new_qty_price(cr, uid, procurement, po_line=po_line, context=context)
 
                         if new_qty > po_line.product_qty:
-                            po_line_obj.write(cr, SUPERUSER_ID, po_line.id, {'product_qty': new_qty, 'price_unit': new_price}, context=context)
+                            po_line_obj.write(cr, SUPERUSER_ID, po_line.id, {'product_qty': new_qty, 'price_unit': new_price}, context=ctx_company)
                             self.update_origin_po(cr, uid, po_rec, procurement, context=context)
                             sum_po_line_ids.append(procurement.id)
                     else:
                         line_vals.update(order_id=po_id)
-                        po_line_id = po_line_obj.create(cr, SUPERUSER_ID, line_vals, context=context)
+                        po_line_id = po_line_obj.create(cr, SUPERUSER_ID, line_vals, context=ctx_company)
                         linked_po_ids.append(procurement.id)
                 else:
-                    name = seq_obj.get(cr, uid, 'purchase.order', context=context) or _('PO: %s') % procurement.name
+                    name = seq_obj.get(cr, uid, 'purchase.order', context=ctx_company) or _('PO: %s') % procurement.name
                     po_vals = {
                         'name': name,
                         'origin': procurement.origin,
