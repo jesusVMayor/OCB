@@ -5,14 +5,14 @@
 # Translators:
 # Daniel Santos <dcs@thinkopensolutions.pt>, 2014
 # Diogo Duarte <diogocarvalhoduarte@gmail.com>, 2015
-# MMSRS <h_manuela_rodsilva@gmail.com>, 2015
+# Manuela Silva <h_manuela_rodsilva@gmail.com>, 2015
 # Ricardo Martins <ricardo.nbs.martins@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo 8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-15 06:40+0000\n"
-"PO-Revision-Date: 2015-10-15 10:00+0000\n"
+"PO-Revision-Date: 2015-11-28 08:22+0000\n"
 "Last-Translator: Martin Trigaux\n"
 "Language-Team: Portuguese (http://www.transifex.com/odoo/odoo-8/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -9188,7 +9188,7 @@ msgstr "Fornecedores"
 #. module: account
 #: view:website:account.report_invoice_document
 msgid "TIN:"
-msgstr ""
+msgstr "TIN:"
 
 #. module: account
 #: view:cash.box.out:account.cash_box_out_form
@@ -11125,6 +11125,13 @@ msgid ""
 msgstr "Está a selecionar transações tanto de uma conta a pagar como de uma conta a receber .<br>\n\nPara prosseguir, primeiro precisa desmarcar as transações %s ."
 
 #. module: account
+#. openerp-web
+#: code:addons/account/static/src/js/account_widgets.js:1050
+#, python-format
+msgid "last"
+msgstr ""
+
+#. module: account
 #: help:account.move.line,blocked:0
 msgid ""
 "You can check this box to mark this journal item as a litigation with the "
@@ -11750,4 +11757,4 @@ msgid ""
 "\n"
 "Thank you in advance for your cooperation.\n"
 "Best Regards,"
-msgstr ""
+msgstr "Exmo. Senhor/Senhora,\n\nOs nossos registos indicam que alguns pagamentos na sua conta, ainda se encontram por liquidar. Por favor, encontre os detalhes abaixo.\nSe o valor já tiver sido pago, por favor, ignore este aviso. Caso contrário, por favor, envie-nos o total indicado abaixo.\nSe tiver quaisquer dúvidas em relação à sua conta, por favor, contacte-nos.\n\nObrigado antecipadamente pela sua colaboração.\n\nMelhores Cumprimentos,"

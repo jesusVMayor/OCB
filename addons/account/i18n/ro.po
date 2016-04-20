@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Odoo 8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-10-15 06:40+0000\n"
-"PO-Revision-Date: 2015-10-15 10:00+0000\n"
+"PO-Revision-Date: 2015-11-28 08:22+0000\n"
 "Last-Translator: Martin Trigaux\n"
 "Language-Team: Romanian (http://www.transifex.com/odoo/odoo-8/language/ro/)\n"
 "MIME-Version: 1.0\n"
@@ -6789,7 +6789,7 @@ msgstr "Numarul de zile care se adauga inainte de a calcula ziua din luna. Daca 
 msgid ""
 "Number of partial amounts that can be combined to find a balance point can "
 "be chosen as the power of the automatic reconciliation"
-msgstr ""
+msgstr "Numarul sumelor partiale care pot fi combinate pentru a gasi un punct al soldului poate fi ales drept puterea reconcilierii automate"
 
 #. module: account
 #. openerp-web
@@ -11122,6 +11122,13 @@ msgid ""
 "\n"
 "In order to proceed, you first need to deselect the %s transactions."
 msgstr "Selectaţi tranzacţii atât din contul de plăti cât şi de încasări.\n\nPentru a continua, trebuie mai întâi să deselecta tranzacțiile% s."
+
+#. module: account
+#. openerp-web
+#: code:addons/account/static/src/js/account_widgets.js:1050
+#, python-format
+msgid "last"
+msgstr ""
 
 #. module: account
 #: help:account.move.line,blocked:0
