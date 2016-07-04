@@ -20,7 +20,7 @@
 #
 ##############################################################################
 from datetime import datetime, timedelta
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, DATETIME_FORMATS_MAP, float_compare
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, DATETIME_FORMATS_MAP, float_compare, float_is_zero
 from openerp.osv import fields, osv
 from openerp.tools.safe_eval import safe_eval as eval
 from openerp.tools.translate import _
@@ -40,6 +40,9 @@ class sale_order(osv.osv):
     def _get_shipped(self, cr, uid, ids, name, args, context=None):
         res = {}
         for sale in self.browse(cr, uid, ids, context=context):
+            if sale.state == 'shipping_except':
+                res[sale.id] = False
+                continue
             group = sale.procurement_group_id
             if group:
                 res[sale.id] = all([proc.state in ['cancel', 'done'] for proc in group.procurement_ids])
@@ -57,7 +60,7 @@ class sale_order(osv.osv):
     def _get_orders_procurements(self, cr, uid, ids, context=None):
         res = set()
         for proc in self.pool.get('procurement.order').browse(cr, uid, ids, context=context):
-            if proc.state =='done' and proc.sale_line_id:
+            if proc.state in ('cancel', 'done') and proc.sale_line_id:
                 res.add(proc.sale_line_id.order_id.id)
         return list(res)
 
@@ -92,7 +95,8 @@ class sale_order(osv.osv):
             ], 'Create Invoice', required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
             help="""On demand: A draft invoice can be created from the sales order when needed. \nOn delivery order: A draft invoice can be created from the delivery order when the products have been delivered. \nBefore delivery: A draft invoice is created from the sales order and must be paid before the products can be delivered."""),
         'shipped': fields.function(_get_shipped, string='Delivered', type='boolean', store={
-                'procurement.order': (_get_orders_procurements, ['state'], 10)
+                'procurement.order': (_get_orders_procurements, ['state'], 10),
+                'sale.order': (lambda s, cr, uid, ids, ctx=None: ids, ['state'], 20),
             }),
         'warehouse_id': fields.many2one('stock.warehouse', 'Warehouse', required=True),
         'picking_ids': fields.function(_get_picking_ids, method=True, type='one2many', relation='stock.picking', string='Picking associated to this sale'),
@@ -102,6 +106,12 @@ class sale_order(osv.osv):
         'picking_policy': 'direct',
         'order_policy': 'manual',
     }
+
+    #FORWARDPORT UP TO SAAS-6
+    def _get_customer_lead(self, cr, uid, product_tmpl_id):
+        super(sale_order, self)._get_customer_lead(cr, uid, product_tmpl_id)
+        return product_tmpl_id.sale_delay
+
     def onchange_warehouse_id(self, cr, uid, ids, warehouse_id, context=None):
         val = {}
         if warehouse_id:
@@ -217,7 +227,7 @@ class sale_order_line(osv.osv):
         'product_packaging': fields.many2one('product.packaging', 'Packaging'),
         'number_packages': fields.function(_number_packages, type='integer', string='Number Packages'),
         'route_id': fields.many2one('stock.location.route', 'Route', domain=[('sale_selectable', '=', True)]),
-        'product_tmpl_id': fields.related('product_id', 'product_tmpl_id', type='many2one', relation='product.template', string='Product Template'),
+        'product_tmpl_id': fields.related('product_id', 'product_tmpl_id', type='many2one', relation='product.template', string='Product Template', readonly=True),
     }
 
     _defaults = {
@@ -290,6 +300,13 @@ class sale_order_line(osv.osv):
                     if product_route.id == mto_route_id:
                         is_available = True
                         break
+        if not is_available:
+            product_routes = product.route_ids + product.categ_id.total_route_ids
+            for pull_rule in product_routes.mapped('pull_ids'):
+                if pull_rule.picking_type_id.sudo().default_location_src_id.usage == 'supplier' and\
+                        pull_rule.picking_type_id.sudo().default_location_dest_id.usage == 'customer':
+                    is_available = True
+                    break
         return is_available
 
     def product_id_change_with_wh(self, cr, uid, ids, pricelist, product, qty=0,
@@ -403,10 +420,14 @@ class stock_move(osv.osv):
             res['account_analytic_id'] = sale_line.order_id.project_id and sale_line.order_id.project_id.id or False
             res['discount'] = sale_line.discount
             if move.product_id.id != sale_line.product_id.id:
-                res['price_unit'] = self.pool['product.pricelist'].price_get(
-                    cr, uid, [sale_line.order_id.pricelist_id.id],
-                    move.product_id.id, move.product_uom_qty or 1.0,
-                    sale_line.order_id.partner_id, context=context)[sale_line.order_id.pricelist_id.id]
+                precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Discount')
+                if float_is_zero(sale_line.discount, precision_digits=precision):
+                    res['price_unit'] = self.pool['product.pricelist'].price_get(
+                        cr, uid, [sale_line.order_id.pricelist_id.id],
+                        move.product_id.id, move.product_uom_qty or 1.0,
+                        sale_line.order_id.partner_id, context=context)[sale_line.order_id.pricelist_id.id]
+                else:
+                    res['price_unit'] = move.product_id.lst_price
             else:
                 res['price_unit'] = sale_line.price_unit
             uos_coeff = move.product_uom_qty and move.product_uos_qty / move.product_uom_qty or 1.0
@@ -447,12 +468,13 @@ class stock_picking(osv.osv):
         """ Inherit the original function of the 'stock' module
             We select the partner of the sales order as the partner of the customer invoice
         """
-        if picking.sale_id:
-            saleorder_ids = self.pool['sale.order'].search(cr, uid, [('procurement_group_id' ,'=', picking.group_id.id)], context=context)
-            saleorders = self.pool['sale.order'].browse(cr, uid, saleorder_ids, context=context)
-            if saleorders and saleorders[0] and saleorders[0].order_policy == 'picking':
-                saleorder = saleorders[0]
-                return saleorder.partner_invoice_id.id
+        if context.get('inv_type') and context['inv_type'] in ('out_invoice', 'out_refund'):
+            if picking.sale_id:
+                saleorder_ids = self.pool['sale.order'].search(cr, uid, [('procurement_group_id' ,'=', picking.group_id.id)], context=context)
+                saleorders = self.pool['sale.order'].browse(cr, uid, saleorder_ids, context=context)
+                if saleorders and saleorders[0] and saleorders[0].order_policy == 'picking':
+                    saleorder = saleorders[0]
+                    return saleorder.partner_invoice_id.id
         return super(stock_picking, self)._get_partner_to_invoice(cr, uid, picking, context=context)
     
     def _get_sale_id(self, cr, uid, ids, name, args, context=None):
@@ -480,7 +502,7 @@ class stock_picking(osv.osv):
     def _get_invoice_vals(self, cr, uid, key, inv_type, journal_id, move, context=None):
         inv_vals = super(stock_picking, self)._get_invoice_vals(cr, uid, key, inv_type, journal_id, move, context=context)
         sale = move.picking_id.sale_id
-        if sale:
+        if sale and inv_type in ('out_invoice', 'out_refund'):
             inv_vals.update({
                 'fiscal_position': sale.fiscal_position.id,
                 'payment_term': sale.payment_term.id,

@@ -423,7 +423,16 @@
          * Saves an RTE content, which always corresponds to a view section (?).
          */
         saveElement: function ($el) {
-            var markup = $el.prop('outerHTML');
+            // escape text nodes for xml saving
+            var escaped_el = $el.clone();
+            var to_escape = escaped_el.find('*').addBack();
+            to_escape = to_escape.not(to_escape.filter('object,iframe,script,style,[data-oe-model][data-oe-model!="ir.ui.view"]').find('*').addBack());
+            to_escape.contents().each(function(){
+                if(this.nodeType == 3) {
+                    this.nodeValue = $('<div />').text(this.nodeValue).html();
+                }
+            });
+            var markup = escaped_el.prop('outerHTML');
             return openerp.jsonRpc('/web/dataset/call', 'call', {
                 model: 'ir.ui.view',
                 method: 'save',
@@ -998,6 +1007,11 @@
             });
             return this._super().then(this.proxy('bind_data'));
         },
+        is_email: function(val) {
+            // http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
+            var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            return re.test(val);
+        },
         get_data: function (test) {
             var self = this,
                 def = new $.Deferred(),
@@ -1016,7 +1030,7 @@
             var size = this.$("input[name='link-style-size']:checked").val();
             var classes = (style && style.length ? "btn " : "") + style + " " + size;
 
-            if ($e.hasClass('email-address') && $e.val().indexOf("@") !== -1) {
+            if ($e.hasClass('email-address') && this.is_email($e.val())) {
                 def.resolve('mailto:' + val, false, label, classes);
             } else if ($e.val() && $e.val().length && $e.hasClass('page')) {
                 var data = $e.select2('data');
@@ -1131,7 +1145,7 @@
         },
         onkeyup: function (e) {
             var $e = $(e.target);
-            var is_link = ($e.val()||'').length && $e.val().indexOf("@") === -1;
+            var is_link = !this.is_email($e.val())
             this.$('input.window-new').closest("div").toggle(is_link);
             this.preview();
         },
