@@ -200,6 +200,7 @@
   font-weight: bold;
   font-size: inherit;
 }
+
 .openerp a.button:link, .openerp a.button:visited, .openerp button, .openerp .oe_button, .openerp input[type='submit'] {
   display: inline-block;
   border: none;
@@ -219,6 +220,15 @@
   background-position: 0;
   color: #FFF;
 }
+
+.openerp .close {
+    color: #4c4c4c;
+}
+
+.openerp .close:hover{
+    color: #4c4c4c;
+}
+
 .openerp a.button:focus, .openerp button:focus, .openerp .oe_button:focus, .openerp input[type='submit']:focus {
   background-color: #0a7b66;
   background-position: 0;
