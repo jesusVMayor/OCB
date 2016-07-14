@@ -229,6 +229,15 @@
     color: #4c4c4c;
 }
 
+.openerp .oe_list_content > tbody > tr > td > button[name=delete], .openerp .oe_list_content > tbody > tr > th > button[name=delete] {
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #09b29b;
+}
+
+
+
 .openerp a.button:focus, .openerp button:focus, .openerp .oe_button:focus, .openerp input[type='submit']:focus {
   background-color: #0a7b66;
   background-position: 0;
