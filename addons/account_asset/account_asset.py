@@ -39,7 +39,7 @@ class account_asset_category(osv.osv):
         'account_depreciation_id': fields.many2one('account.account', 'Depreciation Account', required=True, domain=[('type','=','other')]),
         'account_expense_depreciation_id': fields.many2one('account.account', 'Depr. Expense Account', required=True, domain=[('type','=','other')]),
         'journal_id': fields.many2one('account.journal', 'Journal', required=True),
-        'company_id': fields.many2one('res.company', 'Company', required=True),
+        'company_id': fields.many2one('res.company', 'Company', required=False),
         'method': fields.selection([('linear','Linear'),('degressive','Degressive')], 'Computation Method', required=True, help="Choose the method to use to compute the amount of depreciation lines.\n"\
             "  * Linear: Calculated on basis of: Gross Value / Number of Depreciations\n" \
             "  * Degressive: Calculated on basis of: Residual Value * Degressive Factor"),
@@ -56,7 +56,6 @@ class account_asset_category(osv.osv):
     }
 
     _defaults = {
-        'company_id': lambda self, cr, uid, context: self.pool.get('res.company')._company_default_get(cr, uid, 'account.asset.category', context=context),
         'method': 'linear',
         'method_number': 5,
         'method_time': 'number',
@@ -77,7 +76,7 @@ class account_asset_asset(osv.osv):
 
     def unlink(self, cr, uid, ids, context=None):
         for asset in self.browse(cr, uid, ids, context=context):
-            if asset.account_move_line_ids: 
+            if asset.account_move_line_ids:
                 raise osv.except_osv(_('Error!'), _('You cannot delete an asset that contains posted depreciation lines.'))
         return super(account_asset_asset, self).unlink(cr, uid, ids, context=context)
 
@@ -227,7 +226,7 @@ class account_asset_asset(osv.osv):
             else:
                 val['currency_id'] = company.currency_id.id
         return {'value': val}
-    
+
     def onchange_purchase_salvage_value(self, cr, uid, ids, purchase_value, salvage_value, context=None):
         val = {}
         for asset in self.browse(cr, uid, ids, context=context):
@@ -235,7 +234,7 @@ class account_asset_asset(osv.osv):
                 val['value_residual'] = purchase_value - salvage_value
             if salvage_value:
                 val['value_residual'] = purchase_value - salvage_value
-        return {'value': val}    
+        return {'value': val}
     def _entry_count(self, cr, uid, ids, field_name, arg, context=None):
         MoveLine = self.pool('account.move.line')
         return {
@@ -341,7 +340,7 @@ class account_asset_asset(osv.osv):
         asset_id = super(account_asset_asset, self).create(cr, uid, vals, context=context)
         self.compute_depreciation_board(cr, uid, [asset_id], context=context)
         return asset_id
-    
+
     def open_entries(self, cr, uid, ids, context=None):
         context = dict(context or {}, search_default_asset_id=ids, default_asset_id=ids)
         return {
