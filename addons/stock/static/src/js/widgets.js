@@ -116,19 +116,40 @@ function openerp_picking_widgets(instance){
             });
             //sort element by things to do, then things done, then grouped by packages
             group_by_container = _.groupBy(self.rows, function(row){
+                console.log('return row.cols.container: ' + row.cols.container)
                 return row.cols.container;
             });
             var sorted_row = [];
             if (group_by_container.undefined !== undefined){
-                group_by_container.undefined.sort(function(a,b){return (b.classes === '') - (a.classes === '');});
+                var done_row = [];
+                var todo_row = [];
                 $.each(group_by_container.undefined, function(key, value){
-                    sorted_row.push(value);
+                    if(value.classes !== ''){
+                        done_row.push(value);
+                    }
+                    else{
+                        todo_row.push(value);
+                    }
                 });
+                todo_row.sort(function(a, b){
+                    if(a.cols.loc < b.cols.loc) return -1;
+                    if(a.cols.loc > b.cols.loc) return 1;
+                    return 0;
+                });
+
+                done_row.sort(function(a, b){
+                    if(a.cols.loc < b.cols.loc) return -1;
+                    if(a.cols.loc > b.cols.loc) return 1;
+                    return 0;
+                });
+
+                sorted_row = todo_row.concat(done_row);
             }
 
             $.each(group_by_container, function(key, value){
                 if (key !== 'undefined'){
                     $.each(value, function(k,v){
+                        console.log('v: ' + v)
                         sorted_row.push(v);
                     });
                 }
@@ -267,7 +288,7 @@ function openerp_picking_widgets(instance){
                 if (value>=0){
                     self.getParent().set_operation_quantity(value, op_id);
                 }
-                
+
                 self.getParent().barcode_scanner.connect(function(ean){
                     self.getParent().scan(ean);
                 });
@@ -335,7 +356,7 @@ function openerp_picking_widgets(instance){
                     $('.container_head[data-package-id="'+pack_id+'"]').data('ulid', ul_id);
                 }
             });
-            
+
             //remove navigtion bar from default openerp GUI
             $('td.navbar').html('<div></div>');
         },
@@ -528,7 +549,7 @@ function openerp_picking_widgets(instance){
             }
             catch(e) {
                 //avoid crash if a not supported char is given (like '\' or ')')
-	        return [];
+            return [];
             }
 
             var results = [];
