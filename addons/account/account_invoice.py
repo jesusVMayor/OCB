@@ -1228,8 +1228,8 @@ class account_invoice_line(models.Model):
         price = self.price_unit * (1 - (self.discount or 0.0) / 100.0)
         taxes = self.invoice_line_tax_id.compute_all(price, self.quantity, product=self.product_id, partner=self.invoice_id.partner_id)
         self.price_subtotal = taxes['total']
-        if self.invoice_id:
-            self.price_subtotal = self.invoice_id.currency_id.round(self.price_subtotal)
+        #~ if self.invoice_id:
+            #~ self.price_subtotal = self.invoice_id.currency_id.round(self.price_subtotal)
 
     @api.model
     def _default_price_unit(self):
@@ -1278,7 +1278,7 @@ class account_invoice_line(models.Model):
     price_unit = fields.Float(string='Unit Price', required=True,
         digits= dp.get_precision('Product Price'),
         default=_default_price_unit)
-    price_subtotal = fields.Float(string='Amount', digits= dp.get_precision('Account'),
+    price_subtotal = fields.Float(string='Amount', digits= dp.get_precision('Product Price'),
         store=True, readonly=True, compute='_compute_price')
     quantity = fields.Float(string='Quantity', digits= dp.get_precision('Product Unit of Measure'),
         required=True, default=1)
