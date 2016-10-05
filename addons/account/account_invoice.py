@@ -739,12 +739,12 @@ class account_invoice(models.Model):
             if self.currency_id != company_currency:
                 currency = self.currency_id.with_context(date=self.date_invoice or fields.Date.context_today(self))
                 line['currency_id'] = currency.id
-                line['amount_currency'] = currency.round(line['price'])
+                line['amount_currency'] = line['price']
                 line['price'] = currency.compute(line['price'], company_currency)
             else:
                 line['currency_id'] = False
                 line['amount_currency'] = False
-                line['price'] = self.currency_id.round(line['price'])
+                line['price'] = line['price']
             line['ref'] = ref
             if self.type in ('out_invoice','in_refund'):
                 total += line['price']
@@ -1447,7 +1447,7 @@ class account_invoice_line(models.Model):
                 tax_code_found = True
 
                 res[-1]['tax_code_id'] = tax_code_id
-                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)
+                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency, round=False)
 
         return res
 
@@ -1561,7 +1561,7 @@ class account_invoice_tax(models.Model):
                     'amount': tax['amount'],
                     'manual': False,
                     'sequence': tax['sequence'],
-                    'base': currency.round(tax['price_unit'] * line['quantity']),
+                    'base': tax['price_unit'] * line['quantity']
                 }
                 if invoice.type in ('out_invoice','in_invoice'):
                     val['base_code_id'] = tax['base_code_id']
