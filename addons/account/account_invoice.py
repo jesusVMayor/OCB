@@ -740,7 +740,7 @@ class account_invoice(models.Model):
                 currency = self.currency_id.with_context(date=self.date_invoice or fields.Date.context_today(self))
                 line['currency_id'] = currency.id
                 line['amount_currency'] = line['price']
-                line['price'] = currency.compute(line['price'], company_currency)
+                line['price'] = currency.compute(line['price'], company_currency, round=False)
             else:
                 line['currency_id'] = False
                 line['amount_currency'] = False
@@ -753,6 +753,8 @@ class account_invoice(models.Model):
             else:
                 total -= line['price']
                 total_currency -= line['amount_currency'] or line['price']
+        total = self.currency_id.round(total)
+        total_currency = self.currency_id.round(total_currency)
         return total, total_currency, invoice_move_lines
 
     def inv_line_characteristic_hashcode(self, invoice_line):
@@ -1447,7 +1449,7 @@ class account_invoice_line(models.Model):
                 tax_code_found = True
 
                 res[-1]['tax_code_id'] = tax_code_id
-                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency, round=False)
+                res[-1]['tax_amount'] = currency.compute(tax_amount, company_currency)
 
         return res
 
@@ -1561,7 +1563,7 @@ class account_invoice_tax(models.Model):
                     'amount': tax['amount'],
                     'manual': False,
                     'sequence': tax['sequence'],
-                    'base': tax['price_unit'] * line['quantity']
+                    'base': currency.round(tax['price_unit'] * line['quantity']),
                 }
                 if invoice.type in ('out_invoice','in_invoice'):
                     val['base_code_id'] = tax['base_code_id']
