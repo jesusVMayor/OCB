@@ -739,12 +739,12 @@ class account_invoice(models.Model):
             if self.currency_id != company_currency:
                 currency = self.currency_id.with_context(date=self.date_invoice or fields.Date.context_today(self))
                 line['currency_id'] = currency.id
-                line['amount_currency'] = line['price']
-                line['price'] = currency.compute(line['price'], company_currency, round=False)
+                line['amount_currency'] = currency.round(line['price'])
+                line['price'] = currency.compute(line['price'], company_currency)
             else:
                 line['currency_id'] = False
                 line['amount_currency'] = False
-                line['price'] = line['price']
+                line['price'] = self.currency_id.round(line['price'])
             line['ref'] = ref
             if self.type in ('out_invoice','in_refund'):
                 total += line['price']
@@ -753,8 +753,6 @@ class account_invoice(models.Model):
             else:
                 total -= line['price']
                 total_currency -= line['amount_currency'] or line['price']
-        total = self.currency_id.round(total)
-        total_currency = self.currency_id.round(total_currency)
         return total, total_currency, invoice_move_lines
 
     def inv_line_characteristic_hashcode(self, invoice_line):
@@ -1230,8 +1228,8 @@ class account_invoice_line(models.Model):
         price = self.price_unit * (1 - (self.discount or 0.0) / 100.0)
         taxes = self.invoice_line_tax_id.compute_all(price, self.quantity, product=self.product_id, partner=self.invoice_id.partner_id)
         self.price_subtotal = taxes['total']
-        #~ if self.invoice_id:
-            #~ self.price_subtotal = self.invoice_id.currency_id.round(self.price_subtotal)
+        if self.invoice_id:
+            self.price_subtotal = self.invoice_id.currency_id.round(self.price_subtotal)
 
     @api.model
     def _default_price_unit(self):
@@ -1280,7 +1278,7 @@ class account_invoice_line(models.Model):
     price_unit = fields.Float(string='Unit Price', required=True,
         digits= dp.get_precision('Product Price'),
         default=_default_price_unit)
-    price_subtotal = fields.Float(string='Amount', digits= dp.get_precision('Product Price'),
+    price_subtotal = fields.Float(string='Amount', digits= dp.get_precision('Account'),
         store=True, readonly=True, compute='_compute_price')
     quantity = fields.Float(string='Quantity', digits= dp.get_precision('Product Unit of Measure'),
         required=True, default=1)
