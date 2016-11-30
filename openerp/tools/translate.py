@@ -746,12 +746,10 @@ def trans_generate(lang, modules, cr):
                 _logger.error("name error in %s: %s", xml_name, str(exc))
                 continue
             objmodel = registry.get(obj.model)
-            if (objmodel is None or (
-                        field_name not in objmodel._columns and
-                        field_name not in objmodel._fields)
+            if (objmodel is None or field_name not in objmodel._fields
                     or not objmodel._translate):
                 continue
-            field_def = objmodel._columns.get(field_name, objmodel._fields[field_name])
+            field_def = objmodel._fields[field_name]
 
             name = "%s,%s" % (encode(obj.model), field_name)
             push_translation(module, 'field', name, 0, encode(field_def.string))
@@ -861,8 +859,9 @@ def trans_generate(lang, modules, cr):
 
     def get_module_from_path(path):
         for (mp, rec) in path_list:
+            mp = os.path.join(mp, '')
             if rec and path.startswith(mp) and os.path.dirname(path) != mp:
-                path = path[len(mp)+1:]
+                path = path[len(mp):]
                 return path.split(os.path.sep)[0]
         return 'base' # files that are not in a module are considered as being in 'base' module
 
