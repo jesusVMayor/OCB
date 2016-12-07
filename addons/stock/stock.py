@@ -1104,18 +1104,18 @@ class stock_picking(osv.osv):
 
         # Go through all remaining reserved quants and group by product, package, lot, owner, source location and dest location
         for quant, dest_location_id in quants_suggested_locations.items():
-            key = (quant.product_id.id, quant.package_id.id, quant.lot_id.id, quant.owner_id.id, quant.location_id.id, dest_location_id)
+            key = (quant.product_id.id, quant.package_id.id, quant.lot_id.id, quant.owner_id.id, quant.location_id.id, dest_location_id, quant.reservation_id.id)
             if qtys_grouped.get(key):
                 qtys_grouped[key] += quant.qty
             else:
                 qtys_grouped[key] = quant.qty
 
         # Do the same for the forced quantities (in cases of force_assign or incomming shipment for example)
-        for product, qty in forced_qties.items():
+        for move, qty in forced_qties.items():
             if qty <= 0:
                 continue
-            suggested_location_id = _picking_putaway_apply(product)
-            key = (product.id, False, False, picking.owner_id.id, picking.location_id.id, suggested_location_id)
+            suggested_location_id = _picking_putaway_apply(move.product_id)
+            key = (move.product_id.id, False, False, picking.owner_id.id, picking.location_id.id, suggested_location_id, move.id)
             if qtys_grouped.get(key):
                 qtys_grouped[key] += qty
             else:
@@ -1188,10 +1188,10 @@ class stock_picking(osv.osv):
                 forced_qty = (move.state == 'assigned') and move.product_qty - sum([x.qty for x in move_quants]) or 0
                 #if we used force_assign() on the move, or if the move is incoming, forced_qty > 0
                 if float_compare(forced_qty, 0, precision_rounding=move.product_id.uom_id.rounding) > 0:
-                    if forced_qties.get(move.product_id):
-                        forced_qties[move.product_id] += forced_qty
+                    if forced_qties.get(move):
+                        forced_qties[move] += forced_qty
                     else:
-                        forced_qties[move.product_id] = forced_qty
+                        forced_qties[move] = forced_qty
             for vals in self._prepare_pack_ops(cr, uid, picking, picking_quants, forced_qties, context=context):
                 pack_operation_obj.create(cr, uid, vals, context=ctx)
         #recompute the remaining quantities all at once
@@ -1259,7 +1259,8 @@ class stock_picking(osv.osv):
         prod2move_ids = {}
         still_to_do = []
         #make a dictionary giving for each product, the moves and related quantity that can be used in operation links
-        moves = sorted([x for x in picking.move_lines if x.state not in ('done', 'cancel')], key=lambda x: (((x.state == 'assigned') and -2 or 0) + (x.partially_available and -1 or 0)))
+        moves = [x for x in picking.move_lines if x.state not in ('done', 'cancel')]
+        moves = sorted(moves, key=lambda x: x.product_uom_qty, reverse=True)
         for move in moves:
             if not prod2move_ids.get(move.product_id.id):
                 prod2move_ids[move.product_id.id] = [{'move': move, 'remaining_qty': move.product_qty}]
@@ -1269,9 +1270,10 @@ class stock_picking(osv.osv):
         need_rereserve = False
         #sort the operations in order to give higher priority to those with a package, then a serial number
         operations = picking.pack_operation_ids
-        operations = sorted(operations, key=lambda x: ((x.package_id and not x.product_id) and -4 or 0) + (x.package_id and -2 or 0) + (x.lot_id and -1 or 0))
+        #operations = sorted(operations, key=lambda x: ((x.package_id and not x.product_id) and -4 or 0) + (x.package_id and -2 or 0) + (x.lot_id and -1 or 0))
+        operations = sorted(operations, key=lambda x: x.product_qty, reverse=True)
         #delete existing operations to start again from scratch
-        links = link_obj.search(cr, uid, [('operation_id', 'in', [x.id for x in operations])], context=context)
+        links = link_obj.search(cr, uid, ['|',('operation_id', 'in', [x.id for x in operations]),('move_id', 'in', [x.id for x in moves])], context=context)
         if links:
             link_obj.unlink(cr, uid, links, context=context)
         #1) first, try to create links when quants can be identified without any doubt
