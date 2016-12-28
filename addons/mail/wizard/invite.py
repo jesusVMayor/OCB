@@ -41,10 +41,10 @@ class invite_wizard(osv.osv_memory):
             model_name = ir_model.name_get(cr, uid, model_ids, context=context)[0][1]
 
             document_name = self.pool[model].name_get(cr, uid, [res_id], context=context)[0][1]
-            message = _('<div><p>Hello,</p><p>%s invited you to follow %s document: %s.</p></div>') % (user_name, model_name, document_name)
+            message = _('<div><p>Hola,</p><p>%s te ha invitado a seguir %s documento: %s.</p></div>') % (user_name, model_name, document_name)
             result['message'] = message
         elif 'message' in fields:
-            result['message'] = _('<div><p>Hello,</p><p>%s invited you to follow a new document.</p></div>') % user_name
+            result['message'] = _('<div><p>Hola,</p><p>%s te ha invitado a seguir un nuevo documento.</p></div>') % user_name
         return result
 
     _columns = {
