@@ -70,7 +70,7 @@ class sale_order_line(osv.osv):
         return res
 
     def product_id_change(self, cr, uid, ids,
-                          pricelist, 
+                          pricelist,
                           product,
                           qty=0,
                           uom=False,
@@ -123,7 +123,7 @@ class sale_order_line(osv.osv):
                     message = _("The registration has been created for event <i>%s</i> with the ticket <i>%s</i> from the Sale Order %s. ") % (order_line.event_id.name, order_line.event_ticket_id.name, order_line.order_id.name)
                 else:
                     message = _("The registration has been created for event <i>%s</i> from the Sale Order %s. ") % (order_line.event_id.name, order_line.order_id.name)
-                
+
                 context.update({'mail_create_nolog': True})
                 registration_id = registration_obj.create(cr, uid, dic, context=context)
                 registration_obj.message_post(cr, uid, [registration_id], body=message, context=context)
@@ -205,7 +205,8 @@ class event_ticket(osv.osv):
     _columns = {
         'name': fields.char('Name', required=True, translate=True),
         'event_id': fields.many2one('event.event', "Event", required=True, ondelete='cascade'),
-        'product_id': fields.many2one('product.product', 'Product', required=True, domain=[("event_ok", "=", True)]),
+        'product_id': fields.many2one('product.product', 'Product', required=True,
+            domain=["|", ("event_type_id", "!=", False), ("event_ok", "=", True)]),
         'registration_ids': fields.one2many('event.registration', 'event_ticket_id', 'Registrations'),
         'deadline': fields.date("Sales End"),
         'is_expired': fields.function(_is_expired, type='boolean', string='Is Expired'),
