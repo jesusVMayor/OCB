@@ -190,7 +190,7 @@ openerp.mail = function (session) {
 
             // update record_name: Partner profile
             if (this.model == 'res.partner') {
-                this.record_name = 'Partner Profile of ' + this.record_name;
+                this.record_name = _t('Partner Profile of ') + this.record_name;
             }
             else if (this.model == 'hr.employee') {
                 this.record_name = 'News from ' + this.record_name;

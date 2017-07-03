@@ -1735,6 +1735,9 @@ class calendar_event(osv.Model):
         ids_to_unlink = []
 
         for event_id in ids:
+            if isinstance(event_id, str):
+                # se corrige error al suprimir desde vista calendario, los ids vienen como string.
+                event_id = int(event_id)
             if can_be_deleted and len(str(event_id).split('-')) == 1:  # if  ID REAL
                 if self.browse(cr, uid, int(event_id), context).recurrent_id:
                     ids_to_exclure.append(event_id)

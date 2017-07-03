@@ -1,7 +1,7 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
 # * mail
-# 
+#
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014
 # Pedro M. Baeza <pedro.baeza@gmail.com>, 2015
@@ -278,6 +278,13 @@ msgstr "Las respuestas no van al documento original del hilo de discusión. Esto
 #, python-format
 msgid "Apply"
 msgstr "Aplicar"
+
+#. module: mail
+#. openerp-web
+#: code:addons/mail/static/src/js/mail.js:193
+#, python-format
+msgid "Partner Profile of "
+msgstr "Perfil de asociado de "
 
 #. module: mail
 #: model:ir.actions.client,name:mail.action_mail_archives_feeds
