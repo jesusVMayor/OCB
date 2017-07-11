@@ -2327,8 +2327,8 @@ class stock_move(osv.osv):
                     main_domain[move.id] += [('history_ids', 'in', ancestors)]
 
                 #if the move is returned from another, restrict the choice of quants to the ones that follow the returned move
-                if move.origin_returned_move_id:
-                    main_domain[move.id] += [('history_ids', 'in', move.origin_returned_move_id.id)]
+                '''if move.origin_returned_move_id:
+                    main_domain[move.id] += [('history_ids', 'in', move.origin_returned_move_id.id)]'''
                 for link in move.linked_move_operation_ids:
                     operations.add(link.operation_id)
         # Check all ops and sort them: we want to process first the packages, then operations with lot then the rest
