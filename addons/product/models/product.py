@@ -229,7 +229,8 @@ class ProductProduct(models.Model):
                 product_name = supplier_info.product_name or self.default_code
         else:
             product_name = self.name
-        self.partner_ref = '%s%s' % (self.code and '[%s] ' % self.code or '', product_name)
+        code = self._context.get('display_default_code', True) and self.code or False
+        self.partner_ref = '%s%s' % (code and '[%s] ' % code or '', product_name)
 
     @api.one
     @api.depends('image_variant', 'product_tmpl_id.image')
