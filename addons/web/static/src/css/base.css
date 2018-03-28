@@ -3457,3 +3457,8 @@ body {
     position: static !important;
   }
 }
+
+.openerp .oe_form .oe_field_translate {
+  position: relative;
+  z-index: 1;
+}
