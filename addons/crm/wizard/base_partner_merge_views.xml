@@ -34,6 +34,7 @@
                             <field name='group_by_email' />
                             <field name='group_by_name' />
                             <field name='group_by_is_company' />
+                            <field name='group_by_customer' />
                             <field name='group_by_vat' />
                             <field name='group_by_parent_id' />
                         </group>

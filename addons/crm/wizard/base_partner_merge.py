@@ -83,6 +83,7 @@ class MergePartnerAutomatic(models.TransientModel):
     group_by_email = fields.Boolean('Email')
     group_by_name = fields.Boolean('Name')
     group_by_is_company = fields.Boolean('Is Company')
+    group_by_customer = fields.Boolean('Customer')
     group_by_vat = fields.Boolean('VAT')
     group_by_parent_id = fields.Boolean('Parent Company')
 
@@ -360,27 +361,34 @@ class MergePartnerAutomatic(models.TransientModel):
         for field in fields:
             if field in ['email', 'name', 'vat']:
                 filters.append((field, 'IS NOT', 'NULL'))
+            filters.append(('customer', '=', True))
+            filters.append(('is_company', '=', True))
         criteria = ' AND '.join('%s %s %s' % (field, operator, value) for field, operator, value in filters)
 
-        # build the query
-        text = [
-            "SELECT min(id), array_agg(id)",
-            "FROM res_partner",
-        ]
+        # # build the query
+        # text = [
+        #     "SELECT min(id), array_agg(id)",
+        #     "FROM res_partner",
+        # ]
+        #
+        # if criteria:
+        #     text.append('WHERE %s' % criteria)
+        #
+        # text.extend([
+        #     "GROUP BY %s" % group_fields,
+        #     "HAVING COUNT(*) >= 2",
+        #     "ORDER BY min(id)",
+        # ])
 
-        if criteria:
-            text.append('WHERE %s' % criteria)
+        #if maximum_group:
+        #    text.append("LIMIT %s" % maximum_group,)
 
-        text.extend([
-            "GROUP BY %s" % group_fields,
-            "HAVING COUNT(*) >= 2",
-            "ORDER BY min(id)",
-        ])
+        text = "SELECT min(id), array_agg(id) FROM res_partner WHERE vat IS " \
+               "NOT NULL and supplier=True and is_company=True GROUP BY vat, is_company, supplier " \
+               "HAVING COUNT(*) >= 2 ORDER BY min(id)"
 
-        if maximum_group:
-            text.append("LIMIT %s" % maximum_group,)
-
-        return ' '.join(text)
+        #return ' '.join(text)
+        return text
 
     @api.model
     def _compute_selected_groupby(self):
@@ -417,8 +425,7 @@ class MergePartnerAutomatic(models.TransientModel):
             :param partner_ids : list of partner ids to sort
         """
         return self.env['res.partner'].browse(partner_ids).sorted(
-            key=lambda p: (p.active, p.create_date),
-            reverse=True,
+            key=lambda p: (p.create_uid), reverse=True
         )
 
     @api.multi
