@@ -157,6 +157,9 @@ class SaleOrder(models.Model):
     procurement_group_id = fields.Many2one('procurement.group', 'Procurement Group', copy=False)
 
     product_id = fields.Many2one('product.product', related='order_line.product_id', string='Product')
+    commercial_partner_id = fields.Many2one(
+        related='partner_id.commercial_partner_id', string='Commercial Entity',
+        store=True, readonly=True, compute_sudo=True)
 
     @api.model
     def _get_customer_lead(self, product_tmpl_id):
@@ -330,7 +333,9 @@ class SaleOrder(models.Model):
         :param final: if True, refunds will be generated if necessary
         :returns: list of created invoices
         """
-        inv_obj = self.env['account.invoice']
+        ctx = self._context.copy()
+        ctx.update(tracking_disable=True)
+        inv_obj = self.env['account.invoice'].with_context(ctx)
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         invoices = {}
         references = {}
@@ -338,7 +343,8 @@ class SaleOrder(models.Model):
         invoices_name = {}
 
         for order in self:
-            group_key = order.id if grouped else (order.partner_invoice_id.id, order.currency_id.id)
+            group_key = order.id if grouped else (
+                order.commercial_partner_id.id, order.currency_id.id)
             for line in order.order_line.sorted(key=lambda l: l.qty_to_invoice < 0):
                 if float_is_zero(line.qty_to_invoice, precision_digits=precision):
                     continue
@@ -356,9 +362,9 @@ class SaleOrder(models.Model):
                         invoices_name[group_key].append(order.client_order_ref)
 
                 if line.qty_to_invoice > 0:
-                    line.invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
+                    line.with_context(ctx).invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
                 elif line.qty_to_invoice < 0 and final:
-                    line.invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
+                    line.with_context(ctx).invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
 
             if references.get(invoices.get(group_key)):
                 if order not in references[invoices[group_key]]:
