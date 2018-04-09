@@ -198,12 +198,15 @@ class Quant(models.Model):
             quants_move_sudo._quant_update_from_move(move, location_to, dest_package_id, lot_id=lot_id, entire_pack=entire_pack)
             moves_recompute.recalculate_move_state()
 
-        if location_to.usage == 'internal':
+        if location_to.usage == 'internal' and not move.move_dest_id:
             # Do manual search for quant to avoid full table scan (order by id)
             self._cr.execute("""
                 SELECT 0 FROM stock_quant, stock_location WHERE product_id = %s AND stock_location.id = stock_quant.location_id AND
-                ((stock_location.parent_left >= %s AND stock_location.parent_left < %s) OR stock_location.id = %s) AND qty < 0.0 LIMIT 1
-            """, (move.product_id.id, location_to.parent_left, location_to.parent_right, location_to.id))
+                ((stock_location.parent_left >= %s AND 
+                stock_location.parent_left < %s) OR stock_location.id = %s) 
+                AND qty < 0.0  AND stock_quant.company_id = %s LIMIT 1
+            """, (move.product_id.id, location_to.parent_left,
+                  location_to.parent_right, location_to.id, move.company_id.id))
             if self._cr.fetchone():
                 quants_reconcile_sudo._quant_reconcile_negative(move)
 
@@ -356,6 +359,7 @@ class Quant(models.Model):
                ('location_id', 'child_of', self.location_id.id),
                ('product_id', '=', self.product_id.id),
                ('owner_id', '=', self.owner_id.id),
+               ('company_id', '=', self.company_id.id),
                # Do not let the quant eat itself, or it will kill its history (e.g. returns / Stock -> Stock)
                ('id', '!=', self.propagated_from_id.id)]
         if self.package_id.id:
@@ -390,7 +394,8 @@ class Quant(models.Model):
             qty, move,
             pack_operation_id=ops and ops.id or False,
             lot_id=lot_id,
-            company_id=self.env.context.get('company_id', False),
+            company_id=self.env.context.get('company_id', False) or
+                       move.company_id.id,
             domain=domain,
             preferred_domain_list=preferred_domain_list)
 
