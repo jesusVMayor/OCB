@@ -341,7 +341,8 @@ class Partner(models.Model, FormatAddress):
                              'was never correctly set. If an existing contact starts working for a new '
                              'company then a new contact should be created under that new '
                              'company. You can use the "Discard" button to abandon this change.')}
-        if partner.type == 'contact' or self.type == 'contact':
+        if (partner.type == 'contact' or self.type == 'contact') and \
+                partner.company_type == 'person':
             # for contacts: copy the parent address, if set (aka, at least one
             # value is set in the address: otherwise, keep the one from the
             # contact)
@@ -466,7 +467,9 @@ class Partner(models.Model, FormatAddress):
             # 2b. Address fields: sync if address changed
             address_fields = self._address_fields()
             if any(field in values for field in address_fields):
-                contacts = self.child_ids.filtered(lambda c: c.type == 'contact')
+                contacts = self.child_ids.filtered(lambda c: c.type ==
+                                                             'contact' and not
+                                                             c.is_company)
                 contacts.update_address(values)
 
     @api.multi
