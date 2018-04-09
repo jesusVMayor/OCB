@@ -135,6 +135,8 @@ class Currency(models.Model):
     def _get_conversion_rate(self, from_currency, to_currency):
         from_currency = from_currency.with_env(self.env)
         to_currency = to_currency.with_env(self.env)
+        print to_currency.rate
+        print from_currency.rate
         return to_currency.rate / from_currency.rate
 
     @api.model
