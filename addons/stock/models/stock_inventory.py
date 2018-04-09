@@ -397,6 +397,7 @@ class InventoryLine(models.Model):
             ('location_id', '=', values.get('location_id')),
             ('partner_id', '=', values.get('partner_id')),
             ('package_id', '=', values.get('package_id')),
+            ('company_id', '=', values.get('company_id')),
             ('prod_lot_id', '=', values.get('prod_lot_id'))])
         res = super(InventoryLine, self).create(values)
         if existings:
