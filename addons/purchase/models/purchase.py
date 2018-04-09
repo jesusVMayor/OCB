@@ -19,7 +19,7 @@ class PurchaseOrder(models.Model):
     _description = "Purchase Order"
     _order = 'date_order desc, id desc'
 
-    @api.depends('order_line.price_total')
+    #@api.depends('order_line.price_total')
     def _amount_all(self):
         for order in self:
             amount_untaxed = amount_tax = 0.0
@@ -619,7 +619,8 @@ class PurchaseOrderLine(models.Model):
     product_uom = fields.Many2one('product.uom', string='Product Unit of Measure', required=True)
     product_id = fields.Many2one('product.product', string='Product', domain=[('purchase_ok', '=', True)], change_default=True, required=True)
     move_ids = fields.One2many('stock.move', 'purchase_line_id', string='Reservation', readonly=True, ondelete='set null', copy=False)
-    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
+    price_unit = fields.Float(string='Unit Price', required=True, digits=(
+        16,4))
 
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
