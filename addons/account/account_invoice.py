@@ -432,8 +432,8 @@ class account_invoice(models.Model):
         fiscal_position = False
         bank_id = False
 
+        p = self.env['res.partner'].browse(partner_id or False)
         if partner_id:
-            p = self.env['res.partner'].browse(partner_id)
             rec_account = p.property_account_receivable
             pay_account = p.property_account_payable
             if company_id:
@@ -461,7 +461,6 @@ class account_invoice(models.Model):
                 account_id = pay_account.id
                 payment_term_id = p.property_supplier_payment_term.id
             fiscal_position = p.property_account_position.id
-            bank_id = p.bank_ids and p.bank_ids[0].id or False
 
         result = {'value': {
             'account_id': account_id,
@@ -469,8 +468,11 @@ class account_invoice(models.Model):
             'fiscal_position': fiscal_position,
         }}
 
-        if type in ('in_invoice', 'in_refund'):
+        if type in ('in_invoice', 'out_refund'):
+            bank_ids = p.commercial_partner_id.bank_ids
+            bank_id = bank_ids[0].id if bank_ids else False
             result['value']['partner_bank_id'] = bank_id
+            result['domain'] = {'partner_bank_id':  [('id', 'in', bank_ids.ids)]}
 
         if payment_term != payment_term_id:
             if payment_term_id:
@@ -1466,6 +1468,7 @@ class account_invoice_line(models.Model):
                         continue
                     res.append(dict(mres))
                     res[-1]['price'] = 0.0
+                    res[-1]['quantity'] = 0.0  # should be 0.0 for correct 'entries analysis' reporting
                     res[-1]['account_analytic_id'] = False
                 elif not tax_code_id:
                     continue
