@@ -104,8 +104,7 @@
                         attrs="{'invisible': [('customer', '=', False)]}"
                         context="{'default_partner_id': active_id}">
                         <div class="o_form_field o_stat_info">
-                            <span class="o_stat_value"><field name="
-" widget='monetary' options="{'currency_field': 'currency_id'}"/></span>
+                            <span class="o_stat_value"><field name="total_invoiced" widget='monetary' options="{'currency_field': 'currency_id'}"/></span>
                             <span class="o_stat_text">Invoiced</span>
                         </div>
                     </button>
