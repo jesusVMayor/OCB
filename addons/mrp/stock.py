@@ -119,12 +119,12 @@ class StockMove(osv.osv):
                         else:
                             proc = proc_obj.create(cr, uid, valdef, context=context)
                         proc_obj.run(cr, uid, [proc], context=context) #could be omitted
-            
+
             #check if new moves needs to be exploded
             if to_explode_again_ids:
                 for new_move in self.browse(cr, uid, to_explode_again_ids, context=context):
                     processed_ids.extend(self._action_explode(cr, uid, new_move, context=context))
-            
+
             if not move.split_from and move.procurement_id:
                 # Check if procurements have been made to wait for
                 moves = move.procurement_id.move_ids
@@ -134,7 +134,7 @@ class StockMove(osv.osv):
             if processed_ids and move.state == 'assigned':
                 # Set the state of resulting moves according to 'assigned' as the original move is assigned
                 move_obj.write(cr, uid, list(set(processed_ids) - set([move.id])), {'state': 'assigned'}, context=context)
-                
+
             #delete the move with original product which is not relevant anymore
             move_obj.unlink(cr, SUPERUSER_ID, [move.id], context=context)
             #return list of newly created move
@@ -189,7 +189,7 @@ class StockMove(osv.osv):
                 raise osv.except_osv(_('Error!'), _('Cannot consume a move with negative or zero quantity.'))
             quantity_rest = move_qty - product_qty
             # Compare with numbers of move uom as we want to avoid a split with 0 qty
-            quantity_rest_uom = move.product_uom_qty - self.pool.get("product.uom")._compute_qty_obj(cr, uid, move.product_id.uom_id, product_qty, move.product_uom)
+            quantity_rest_uom = move.product_qty - self.pool.get("product.uom")._compute_qty_obj(cr, uid, move.product_id.uom_id, product_qty, move.product_uom)
             if float_compare(quantity_rest_uom, 0, precision_rounding=move.product_uom.rounding) != 0:
                 new_mov = self.split(cr, uid, move, quantity_rest, context=context)
                 if move.production_id:
@@ -246,7 +246,7 @@ class StockMove(osv.osv):
 class stock_warehouse(osv.osv):
     _inherit = 'stock.warehouse'
     _columns = {
-        'manufacture_to_resupply': fields.boolean('Manufacture in this Warehouse', 
+        'manufacture_to_resupply': fields.boolean('Manufacture in this Warehouse',
                                                   help="When products are manufactured, they can be manufactured in this warehouse."),
         'manufacture_pull_id': fields.many2one('procurement.rule', 'Manufacture Rule'),
     }
@@ -272,7 +272,7 @@ class stock_warehouse(osv.osv):
             'route_id': manufacture_route_id,
             'action': 'manufacture',
             'picking_type_id': warehouse.int_type_id.id,
-            'propagate': False, 
+            'propagate': False,
             'warehouse_id': warehouse.id,
         }
 
