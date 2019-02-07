@@ -154,7 +154,7 @@ class website(osv.osv):
         'name': fields.char('Domain'),
         'company_id': fields.many2one('res.company', string="Company"),
         'language_ids': fields.many2many('res.lang', 'website_lang_rel', 'website_id', 'lang_id', 'Languages'),
-        'default_lang_id': fields.many2one('res.lang', string="Default language"),
+        'default_lang_id': fields.many2one('res.lang', string="Default language", required=True),
         'default_lang_code': fields.related('default_lang_id', 'code', type="char", string="Default language code", store=True),
         'social_twitter': fields.char('Twitter Account'),
         'social_facebook': fields.char('Facebook Account'),
@@ -432,12 +432,12 @@ class website(osv.osv):
 
     def search_pages(self, cr, uid, ids, needle=None, limit=None, context=None):
         name = (needle or "").replace("/page/website.", "").replace("/page/", "")
+        name = slugify(name, max_length=50)
         res = []
         for page in self.enumerate_pages(cr, uid, ids, query_string=name, context=context):
-            if needle in page['loc']:
-                res.append(page)
-                if len(res) == limit:
-                    break
+            res.append(page)
+            if len(res) == limit:
+                break
         return res
 
     def kanban(self, cr, uid, ids, model, domain, column, template, step=None, scope=None, orderby=None, context=None):
@@ -735,6 +735,9 @@ class ir_attachment(osv.osv):
                                       string="Resized file content"),
         'mimetype': fields.char('Mime Type', readonly=True),
     }
+
+    def get_serving_groups(self):
+        return super(ir_attachment, self).get_serving_groups() + ['base.group_website_designer']
 
     def _add_mimetype_if_needed(self, values):
         if values.get('datas_fname'):

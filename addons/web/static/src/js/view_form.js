@@ -3469,12 +3469,12 @@ instance.web.form.CompletionFieldMixin = {
         var pop = new instance.web.form.SelectCreatePopup(this);
         pop.select_element(
             self.field.relation,
-            {
+            _.extend(this.options || {}, {
                 title: (view === 'search' ? _t("Search: ") : _t("Create: ")) + this.string,
                 initial_ids: ids ? _.map(ids, function(x) {return x[0];}) : undefined,
                 initial_view: view,
                 disable_multiple_selection: true
-            },
+            }),
             self.build_domain(),
             new instance.web.CompoundContext(self.build_context(), context || {})
         );
@@ -5577,6 +5577,7 @@ instance.web.form.FieldReference = instance.web.form.AbstractField.extend(instan
         this.m2o = new instance.web.form.FieldMany2One(fm, { attrs: {
             name: 'Referenced Document',
             modifiers: JSON.stringify({readonly: this.get('effective_readonly')}),
+            context: this.build_context().eval(),
         }});
         this.m2o.on("change:value", this, this.data_changed);
         this.m2o.appendTo(this.$(".oe_form_view_reference_m2o"));
@@ -6073,13 +6074,20 @@ instance.web.form.FieldStatus = instance.web.form.AbstractField.extend({
             'value_folded': _.find(self.selection.folded, function(i){return i[0] === self.get('value');})
         });
         self.$el.html(content);
-        var statusbar_colors = JSON.parse((self.node.attrs || {}).statusbar_colors || "{}");
-        var color = statusbar_colors[self.get('value')];
-        if (color) {
-            var $color = $.Color(color);
-            var fr = $color.lightness(0.7);
-            var to = $color.lightness(0.4);
-            self.$(".oe_active, .oe_active > .arrow span").css("background-image", 'linear-gradient(to bottom, ' + fr.toHexString() + ', ' + to.toHexString() + ')');
+        if ('statusbar_colors' in self.node.attrs) {
+            var statusbar_colors = instance.web.py_eval(
+                    self.node.attrs.statusbar_colors
+                );
+            var color = statusbar_colors[self.get('value')];
+            if (color) {
+                var $color = $.Color(color);
+                var fr = $color.lightness(0.7);
+                var to = $color.lightness(0.4);
+                self.$(".oe_active, .oe_active > .arrow span").css(
+                    "background-image",
+                    'linear-gradient(to bottom, ' + fr.toHexString() + ', ' + to.toHexString() + ')'
+                );
+            }
         }
     },
     calc_domain: function() {
