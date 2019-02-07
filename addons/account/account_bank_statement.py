@@ -836,6 +836,7 @@ class account_bank_statement_line(osv.osv):
         for mv_line_dict in mv_line_dicts:
             if mv_line_dict.get('is_tax_line'):
                 continue
+            mv_line_dict = mv_line_dict.copy()
             mv_line_dict['ref'] = move_name
             mv_line_dict['move_id'] = move_id
             mv_line_dict['period_id'] = st_line.statement_id.period_id.id
@@ -920,7 +921,8 @@ class account_bank_statement_line(osv.osv):
                 move_line_pairs_to_reconcile.append([new_aml_id, counterpart_move_line_id])
         # Reconcile
         for pair in move_line_pairs_to_reconcile:
-            aml_obj.reconcile_partial(cr, uid, pair, context=context)
+            # DO NOT FORWARD PORT
+            aml_obj.reconcile_partial(cr, uid, pair, context=dict(context, bs_move_id=move_id))
         # Mark the statement line as reconciled
         self.write(cr, uid, id, {'journal_entry_id': move_id}, context=context)
 
