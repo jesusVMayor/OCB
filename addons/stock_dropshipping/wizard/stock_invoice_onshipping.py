@@ -24,7 +24,7 @@ from openerp.tools.translate import _
 
 class stock_invoice_onshipping(osv.osv_memory):
     _inherit = "stock.invoice.onshipping"
-    
+
     def _get_journal_type(self, cr, uid, context=None):
         if context is None:
             context = {}
@@ -35,15 +35,15 @@ class stock_invoice_onshipping(osv.osv_memory):
         src_usage = pick.move_lines[0].location_id.usage
         dest_usage = pick.move_lines[0].location_dest_id.usage
         if src_usage == 'supplier' and dest_usage == 'customer':
-            pick_purchase = pick.move_lines and pick.move_lines[0].purchase_line_id and pick.move_lines[0].purchase_line_id.order_id.invoice_method == 'picking'
+            pick_purchase = any([x.purchase_line_id and x.purchase_line_id.order_id.invoice_method == 'picking' for x in pick.move_lines])
             if pick_purchase:
                 return 'purchase'
             else:
                 return 'sale'
         else:
             return super(stock_invoice_onshipping, self)._get_journal_type(cr, uid, context=context)
-        
-        
+
+
     _defaults = {
         'journal_type': _get_journal_type,
         }
