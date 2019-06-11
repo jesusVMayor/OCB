@@ -215,7 +215,10 @@ class google_calendar(osv.AbstractModel):
             type = 'dateTime'
             vstype = 'date'
         attendee_list = []
+        user_partners = [x['partner_id'][0] for x in self.env['res.users'].search([]).read(['partner_id'])]
         for attendee in event.attendee_ids:
+            if attendee.partner_id.id not in user_partners:
+                continue
             email = tools.email_split(attendee.email)
             email = email[0] if email else 'NoEmail@mail.com'
             attendee_list.append({
