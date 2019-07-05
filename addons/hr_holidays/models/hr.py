@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools.float_utils import float_round, float_compare
 
 
 class Department(models.Model):
@@ -103,7 +104,7 @@ class Employee(models.Model):
     def _compute_remaining_leaves(self):
         remaining = self._get_remaining_leaves()
         for employee in self:
-            employee.remaining_leaves = remaining.get(employee.id, 0.0)
+            employee.remaining_leaves = float_round(remaining.get(employee.id, 0.0), precision_digits=2)
 
     @api.multi
     def _inverse_remaining_leaves(self):
@@ -123,7 +124,7 @@ class Employee(models.Model):
             if not status:
                 continue
             # if a status is found, then compute remaing leave for current employee
-            difference = employee.remaining_leaves - actual_remaining.get(employee.id, 0)
+            difference = float_compare(employee.remaining_leaves, actual_remaining.get(employee.id, 0.0), precision_digits=2)
             if difference > 0:
                 leave = self.env['hr.holidays'].create({
                     'name': _('Allocation for %s') % employee.name,
