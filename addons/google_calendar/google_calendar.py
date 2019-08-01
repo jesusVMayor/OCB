@@ -215,7 +215,8 @@ class google_calendar(osv.AbstractModel):
             type = 'dateTime'
             vstype = 'date'
         attendee_list = []
-        user_partners = [x['partner_id'][0] for x in self.env['res.users'].search([]).read(['partner_id'])]
+        user_partners_ids = self.pool.get('res.users').search(cr, uid, [], context=context)
+        user_partners = [x['partner_id'][0] for x in self.pool.get('res.users').read(cr, uid, user_partners_ids, ['partner_id'], context=context)]
         for attendee in event.attendee_ids:
             if attendee.partner_id.id not in user_partners:
                 continue
