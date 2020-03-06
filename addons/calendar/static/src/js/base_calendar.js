@@ -24,7 +24,7 @@ function reload_favorite_list(result) {
                     is_remove: false,
                 };
 
-                sidebar_items[0] = filter_item ;
+                sidebar_items[filter_value] = filter_item ;
                 filter_item = {
                         value: -1,
                         label: _lt("Everybody's calendars"),
@@ -101,8 +101,11 @@ function reload_favorite_list(result) {
                 },
             });
             this.ir_model_m2o.insertAfter($('div.oe_calendar_filter'));
-            this.ir_model_m2o.on('change:value', self, function() { 
-                self.add_filter();
+            this.ir_model_m2o.on('change:value', self, function() {
+                // once selected, we reset the value to false.
+                if (self.ir_model_m2o.get_value()) {
+                    self.add_filter();
+                }
             });
         },
         add_filter: function() {

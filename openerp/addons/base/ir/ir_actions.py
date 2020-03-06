@@ -25,7 +25,6 @@ import operator
 import os
 import time
 import datetime
-import dateutil
 import pytz
 
 import openerp
@@ -37,12 +36,23 @@ from openerp.osv import fields, osv
 from openerp.osv.orm import browse_record
 import openerp.report.interface
 from openerp.report.report_sxw import report_sxw, report_rml
+from openerp.tools import wrap_module
 from openerp.tools.safe_eval import safe_eval as eval
 from openerp.tools.translate import _
 import openerp.workflow
 
 _logger = logging.getLogger(__name__)
 
+
+# build dateutil helper, starting with the relevant *lazy* imports
+import dateutil
+import dateutil.parser
+import dateutil.relativedelta
+import dateutil.rrule
+import dateutil.tz
+mods = {'parser', 'relativedelta', 'rrule', 'tz'}
+attribs = {atr for m in mods for atr in getattr(dateutil, m).__all__}
+dateutil = wrap_module(dateutil, mods | attribs)
 
 class actions(osv.osv):
     _name = 'ir.actions.actions'
@@ -1195,7 +1205,7 @@ class ir_actions_act_client(osv.osv):
     def _get_params(self, cr, uid, ids, field_name, arg, context):
         result = {}
         # Need to remove bin_size from context, to obtains the binary and not the length.
-        context = dict(context, bin_size_params_store=False)
+        context = dict(context, bin_size_params_store=False, bin_size=False)
         for record in self.browse(cr, uid, ids, context=context):
             result[record.id] = record.params_store and eval(record.params_store, {'uid': uid}) or False
         return result

@@ -276,6 +276,9 @@ class MergePartnerAutomatic(osv.TransientModel):
         values = dict()
         for column, field in columns.iteritems():
             if field._type not in ('many2many', 'one2many') and not isinstance(field, fields.function):
+                if field.groups and not self.pool['res.users'].has_group(cr, uid, field.groups):
+                    continue
+
                 for item in itertools.chain(src_partners, [dst_partner]):
                     if item[column]:
                         values[column] = write_serializer(column, item[column])
@@ -553,9 +556,12 @@ class MergePartnerAutomatic(osv.TransientModel):
                 'min_id': min_id,
                 'aggr_ids': aggr_ids,
             }
-
-            proxy.create(cr, uid, values, context=context)
-            counter += 1
+            # To ensure that the used partners are accessible by the user
+            partner_ids = self.pool['res.partner'].search(cr, uid, [('id', 'in', aggr_ids)], context=context)
+            if len(partner_ids) >= 2:
+                values['aggr_ids'] = partner_ids
+                proxy.create(cr, uid, values, context=context)
+                counter += 1
 
         values = {
             'state': 'selection',
