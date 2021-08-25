@@ -390,17 +390,17 @@ msgstr ""
 #. module: payment
 #: model:ir.model.fields,field_description:payment.field_payment_transaction__callback_model_id
 msgid "Callback Document Model"
-msgstr ""
+msgstr "Model dokumentu zpětného volání"
 
 #. module: payment
 #: model:ir.model.fields,field_description:payment.field_payment_transaction__callback_hash
 msgid "Callback Hash"
-msgstr ""
+msgstr "Hash zpětného volání"
 
 #. module: payment
 #: model:ir.model.fields,field_description:payment.field_payment_transaction__callback_method
 msgid "Callback Method"
-msgstr ""
+msgstr "metoda zpětného volání"
 
 #. module: payment
 #. openerp-web
@@ -841,7 +841,7 @@ msgstr "Generovat platební odkaz"
 #. module: payment
 #: model:ir.model,name:payment.model_payment_link_wizard
 msgid "Generate Sales Payment Link"
-msgstr ""
+msgstr "Generovat odkaz na prodejní platbu"
 
 #. module: payment
 #: model:ir.actions.act_window,name:payment.action_invoice_order_generate_link
@@ -953,7 +953,7 @@ msgstr "Instalovat"
 #. module: payment
 #: model:ir.model.fields,field_description:payment.field_payment_acquirer__module_state
 msgid "Installation State"
-msgstr ""
+msgstr "Stav instalace"
 
 #. module: payment
 #: model_terms:ir.ui.view,arch_db:payment.acquirer_search
@@ -1338,7 +1338,7 @@ msgstr "Tok plateb"
 #. module: payment
 #: model_terms:ir.ui.view,arch_db:payment.acquirer_form
 msgid "Payment Followup"
-msgstr ""
+msgstr "Sledování plateb"
 
 #. module: payment
 #: model_terms:ir.ui.view,arch_db:payment.acquirer_form
@@ -1656,7 +1656,7 @@ msgstr "Chyba serveru"
 #. module: payment
 #: model:ir.model.fields.selection,name:payment.selection__payment_transaction__type__server2server
 msgid "Server To Server"
-msgstr "Server To Server"
+msgstr "Server to server"
 
 #. module: payment
 #. openerp-web
@@ -2015,7 +2015,7 @@ msgstr "Nemůžeme vás přesměrovat na platební formulář."
 #: code:addons/payment/static/src/js/payment_processing.js:0
 #, python-format
 msgid "We are processing your payment, please wait ..."
-msgstr "Zpracováváme vaši platbu, prosím čekejte ..."
+msgstr "Zpracováváme vaši platbu, prosím čekejte..."
 
 #. module: payment
 #. openerp-web

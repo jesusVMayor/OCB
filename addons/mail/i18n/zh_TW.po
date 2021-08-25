@@ -6,6 +6,7 @@
 # Martin Trigaux, 2020
 # sejun huang <sejun.huang@gmail.com>, 2020
 # 李振維, 2021
+# Mandy Choy <mnc@odoo.com>, 2021
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2021
 # 
 msgid ""
@@ -565,7 +566,7 @@ msgstr "活動類型"
 #: model:ir.model.fields,field_description:mail.field_res_partner__activity_type_icon
 #: model:ir.model.fields,field_description:mail.field_res_users__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "活動類型圖標"
 
 #. module: mail
 #: model:ir.actions.act_window,name:mail.mail_activity_type_action
@@ -1307,7 +1308,7 @@ msgstr "關閉聊天視窗"
 #: code:addons/mail/static/src/components/chat_window_header/chat_window_header.xml:0
 #, python-format
 msgid "Close conversation"
-msgstr ""
+msgstr "關閉視窗"
 
 #. module: mail
 #: model:ir.model.fields.selection,name:mail.selection__mail_channel_partner__fold_state__closed
@@ -2845,7 +2846,7 @@ msgstr "如果設定完畢，隊列管理員將在指定日期之後發送電子
 msgid ""
 "If set, this content will automatically be sent out to unauthorized users "
 "instead of the default message."
-msgstr ""
+msgstr "設置後，此內容將自動發送給未經授權的用戶，而不是默認消息。"
 
 #. module: mail
 #: model:ir.model.fields,help:mail.field_mail_thread_blacklist__is_blacklisted

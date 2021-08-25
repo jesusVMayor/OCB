@@ -124,10 +124,12 @@ var AnimationEffect = Class.extend(mixins.ParentedMixin, {
         // Initialize the animation startEvents, startTarget, endEvents, endTarget and callbacks
         this._updateCallback = updateCallback;
         this.startEvents = startEvents || 'scroll';
-        this.$startTarget = $($startTarget ? $startTarget : this.startEvents === 'scroll' ? $().getScrollingElement()[0] : window);
+        const mainScrollingElement = $().getScrollingElement()[0];
+        const mainScrollingTarget = mainScrollingElement === document.documentElement ? window : mainScrollingElement;
+        this.$startTarget = $($startTarget ? $startTarget : this.startEvents === 'scroll' ? mainScrollingTarget : window);
         if (options.getStateCallback) {
             this._getStateCallback = options.getStateCallback;
-        } else if (this.startEvents === 'scroll' && this.$startTarget[0] === $().getScrollingElement()[0]) {
+        } else if (this.startEvents === 'scroll' && this.$startTarget[0] === mainScrollingTarget) {
             const $scrollable = this.$startTarget;
             this._getStateCallback = function () {
                 return $scrollable.scrollTop();
@@ -963,9 +965,9 @@ registry.ScrollButton = registry.anchorSlide.extend({
      */
     _onAnimateClick: function (ev) {
         ev.preventDefault();
-        const $nextSection = this.$el.closest('section').next('section');
-        if ($nextSection.length) {
-            this._scrollTo($nextSection);
+        const $nextElement = this.$el.closest('section').next();
+        if ($nextElement.length) {
+            this._scrollTo($nextElement);
         }
     },
 });
@@ -1023,6 +1025,60 @@ registry.HeaderHamburgerFull = publicWidget.Widget.extend({
     _onToggleClick() {
         document.body.classList.add('overflow-hidden');
         setTimeout(() => $(window).trigger('scroll'), 100);
+    },
+});
+
+registry.BottomFixedElement = publicWidget.Widget.extend({
+    selector: '#wrapwrap',
+
+    /**
+     * @override
+     */
+    async start() {
+        this.$scrollingElement = $().getScrollingElement();
+        this.__hideBottomFixedElements = _.debounce(() => this._hideBottomFixedElements(), 500);
+        this.$scrollingElement.on('scroll.bottom_fixed_element', this.__hideBottomFixedElements);
+        $(window).on('resize.bottom_fixed_element', this.__hideBottomFixedElements);
+        return this._super(...arguments);
+    },
+    /**
+     * @override
+     */
+    destroy() {
+        this._super(...arguments);
+        this.$scrollingElement.off('.bottom_fixed_element');
+        $(window).off('.bottom_fixed_element');
+        $('.o_bottom_fixed_element').removeClass('o_bottom_fixed_element_hidden');
+    },
+
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
+
+    /**
+     * Hides the elements that are fixed at the bottom of the screen if the
+     * scroll reaches the bottom of the page and if the elements hide a button.
+     *
+     * @private
+     */
+    _hideBottomFixedElements() {
+        // Note: check in the whole DOM instead of #wrapwrap as unfortunately
+        // some things are still put outside of the #wrapwrap (like the livechat
+        // button which is the main reason of this code).
+        const $bottomFixedElements = $('.o_bottom_fixed_element');
+        if (!$bottomFixedElements.length) {
+            return;
+        }
+
+        $bottomFixedElements.removeClass('o_bottom_fixed_element_hidden');
+        if ((this.$scrollingElement[0].offsetHeight + this.$scrollingElement[0].scrollTop) >= (this.$scrollingElement[0].scrollHeight - 2)) {
+            const buttonEls = [...this.$('.btn:visible')];
+            for (const el of $bottomFixedElements) {
+                if (buttonEls.some(button => dom.areColliding(button, el))) {
+                    el.classList.add('o_bottom_fixed_element_hidden');
+                }
+            }
+        }
     },
 });
 

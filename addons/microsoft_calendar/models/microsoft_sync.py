@@ -217,7 +217,8 @@ class MicrosoftSync(models.AbstractModel):
             else:
                 value = self.env['calendar.event']._microsoft_to_odoo_values(recurrent_event, (), default_values)
                 self.env['calendar.event'].browse(recurrent_event.odoo_id(self.env)).with_context(no_mail_to_attendees=True, mail_create_nolog=True).write(dict(value, need_sync_m=False))
-            values[(self.id, value.get('start'), value.get('stop'))] = dict(value, need_sync_m=False)
+            if value.get('start') and value.get('stop'):
+                values[(self.id, value.get('start'), value.get('stop'))] = dict(value, need_sync_m=False)
 
         if (self.id, vals.get('start'), vals.get('stop')) in values:
             base_event_vals = dict(vals)
@@ -256,9 +257,12 @@ class MicrosoftSync(models.AbstractModel):
             dict(self._microsoft_to_odoo_values(e, default_reminders, default_values), need_sync_m=False)
             for e in (new - new_recurrent)
         ]
-        new_odoo = self.create(odoo_values)
+        new_odoo = self.with_context(dont_notify=True).create(odoo_values)
 
-        synced_recurrent_records = self._sync_recurrence_microsoft2odoo(new_recurrent)
+        synced_recurrent_records = self.with_context(dont_notify=True)._sync_recurrence_microsoft2odoo(new_recurrent)
+        if not self._context.get("dont_notify"):
+            new_odoo._notify_attendees()
+            synced_recurrent_records._notify_attendees()
 
         cancelled = existing.cancelled()
         cancelled_odoo = self.browse(cancelled.odoo_ids(self.env))
@@ -360,5 +364,15 @@ class MicrosoftSync(models.AbstractModel):
     def _get_microsoft_synced_fields(self):
         """Return a set of field names. Changing one of these fields
         marks the record to be re-synchronized.
+        """
+        raise NotImplementedError()
+
+    def _notify_attendees(self):
+        """ Notify calendar event partners.
+        This is called when creating new calendar events in _sync_microsoft2odoo.
+        At the initialization of a synced calendar, Odoo requests all events for a specific
+        MicrosoftCalendar. Among those there will probably be lots of events that will never triggers a notification
+        (e.g. single events that occured in the past). Processing all these events through the notification procedure
+        of calendar.event.create is a possible performance bottleneck. This method aimed at alleviating that.
         """
         raise NotImplementedError()

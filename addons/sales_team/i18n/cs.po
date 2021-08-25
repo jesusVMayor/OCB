@@ -70,6 +70,8 @@ msgid ""
 "Add members to automatically assign their documents to this sales team. You "
 "can only be member of one team."
 msgstr ""
+"Přidejte členy a automaticky přiřaďte jejich dokumenty tomuto prodejnímu "
+"týmu. Můžete být členem pouze jednoho týmu."
 
 #. module: sales_team
 #: model:res.groups,name:sales_team.group_sale_manager
@@ -512,7 +514,7 @@ msgstr "Uživatel: Všechny dokumenty"
 #. module: sales_team
 #: model:res.groups,name:sales_team.group_sale_salesman
 msgid "User: Own Documents Only"
-msgstr ""
+msgstr "Uživatel: Pouze vlastní dokumenty"
 
 #. module: sales_team
 #: model:ir.model,name:sales_team.model_res_users

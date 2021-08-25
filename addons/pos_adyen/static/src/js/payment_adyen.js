@@ -38,7 +38,7 @@ var PaymentAdyen = PaymentInterface.extend({
         if (line) {
             line.set_payment_status('retry');
         }
-        this._show_error(_('Could not connect to the Odoo server, please check your internet connection and try again.'));
+        this._show_error(_t('Could not connect to the Odoo server, please check your internet connection and try again.'));
 
         return Promise.reject(data); // prevent subsequent onFullFilled's from being called
     },
@@ -114,8 +114,14 @@ var PaymentAdyen = PaymentInterface.extend({
         var self = this;
 
         if (this.pos.get_order().selected_paymentline.amount < 0) {
-            this._show_error(_('Cannot process transactions with negative amount.'));
+            this._show_error(_t('Cannot process transactions with negative amount.'));
             return Promise.resolve();
+        }
+
+
+        if (this.poll_response_error)   {
+            this.poll_response_error = false;
+            return self._adyen_handle_response({});
         }
 
         var data = this._adyen_pay_data();
@@ -150,7 +156,7 @@ var PaymentAdyen = PaymentInterface.extend({
             // Only valid response is a 200 OK HTTP response which is
             // represented by true.
             if (! ignore_error && data !== "ok") {
-                self._show_error(_('Cancelling the payment failed. Please cancel it manually on the payment terminal.'));
+                self._show_error(_t('Cancelling the payment failed. Please cancel it manually on the payment terminal.'));
             }
         });
     },
@@ -185,6 +191,7 @@ var PaymentAdyen = PaymentInterface.extend({
             shadow: true,
         }).catch(function (data) {
             reject();
+            self.poll_response_error = true;
             return self._handle_odoo_connection_failure(data);
         }).then(function (status) {
             var notification = status.latest_response;

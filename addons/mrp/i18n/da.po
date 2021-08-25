@@ -3165,6 +3165,12 @@ msgid "Plastic Laminate"
 msgstr "Plastic laminat"
 
 #. module: mrp
+#: code:addons/mrp/models/stock_move.py:0
+#, python-format
+msgid "Please delete the Manufacture Order first."
+msgstr "Venligst slet Produktionsordren først."
+
+#. module: mrp
 #: model:product.product,name:mrp.product_product_wood_ply
 #: model:product.template,name:mrp.product_product_wood_ply_product_template
 msgid "Ply Layer"
@@ -5272,6 +5278,16 @@ msgstr ""
 "Du har ikke registreret <i>producerede</i> kvantiteter endnu. Ved at klikke "
 "på <i>anvend</i> vil Odoo producere alle færdige produkter og forbruge alle "
 "komponenter."
+
+#. module: mrp
+#: code:addons/mrp/models/mrp_production.py:0
+#, python-format
+msgid ""
+"You must indicate a non-zero amount consumed for at least one of your "
+"components"
+msgstr ""
+"Du skal angive et antal forbrugt der er forskellig fra nul, for mindst én af"
+" dine komponenter"
 
 #. module: mrp
 #: code:addons/mrp/models/mrp_workorder.py:0

@@ -3,10 +3,10 @@
 # 	* auth_signup
 # 
 # Translators:
-# Triine Aavik <triine@avalah.ee>, 2020
 # Arma Gedonsky <armagedonsky@hot.ee>, 2020
 # Marek Pontus, 2020
 # Piia Paurson <piia@avalah.ee>, 2020
+# Triine Aavik <triine@avalah.ee>, 2021
 # Eneli Õigus <enelioigus@gmail.com>, 2021
 # 
 msgid ""
@@ -44,8 +44,8 @@ msgid ""
 "<strong>A password reset has been requested for this user. An email "
 "containing the following link has been sent:</strong>"
 msgstr ""
-"<strong>Parooli tühistamist soovitakse sellele kasutajale. Saadeti järgmist "
-"linki sisaldav e-mail:</strong>"
+"<strong>Sellele kasutajale on taotletud parooli lähtestamine. Saadeti "
+"järgmist linki sisaldav e-mail:</strong>"
 
 #. module: auth_signup
 #: model_terms:ir.ui.view,arch_db:auth_signup.res_users_view_form
@@ -215,7 +215,7 @@ msgstr ""
 "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
 "                <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
 "                    <div>\n"
-"                        Lugupeetud ${object.name},<br/><br/>\n"
+"                        Tere, ${object.name}!<br/><br/>\n"
 "                        Olete kutsutud kasutaja ${object.create_uid.name} poolt liituma ettevõttega ${object.company_id.name} Odoos.\n"
 "                        <div style=\"margin: 16px 0px 16px 0px;\">\n"
 "                            <a href=\"${object.signup_url}\" style=\"background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;\">\n"
@@ -227,10 +227,10 @@ msgstr ""
 "                        Teie e-posti aadress sisselogimiseks: <b><a href=\"/web/login?login=${object.email}\" target=\"_blank\">${object.email}</a></b><br/><br/>\n"
 "                        Odoo on kõik-ühes äritarkvara, millel on üle 3 miljoni kasutaja. See täieneb pidevalt ja aitab teie äri kasvatada! \n"
 "                        <br/><br/>\n"
-"                        Odoo kasutusvõimaluste nägemiseks tee läbi <a href=\"https://www.odoo.com/page/tour?utm_source=db&amp;utm_medium=auth\" style=\"color: #875A7B;\">Odoo kooltiused</a>.\n"
+"                        Odoo kasutusvõimaluste nägemiseks tee läbi <a href=\"https://www.odoo.com/page/tour?utm_source=db&amp;utm_medium=auth\" style=\"color: #875A7B;\">Odoo koolitused</a>.\n"
 "                        <br/><br/>\n"
 "                        Head Odoo kasutamist!<br/>\n"
-"                        --<br/>${object.company_id.name} tiim\n"
+"                        --<br/>${object.company_id.name}\n"
 "                    </div>\n"
 "                </td></tr>\n"
 "                <tr><td style=\"text-align:center;\">\n"
@@ -561,7 +561,7 @@ msgstr "Vaba registreerimine"
 #. module: auth_signup
 #: model:ir.model,name:auth_signup.model_ir_http
 msgid "HTTP Routing"
-msgstr ""
+msgstr "HTTP Routing"
 
 #. module: auth_signup
 #: model:ir.model.fields,field_description:auth_signup.field_ir_http__id
@@ -754,6 +754,9 @@ msgid ""
 "list view and click on 'Portal Access Management' option in the dropdown "
 "menu *Action*."
 msgstr ""
+"Selleks, et saata kutseid B2B režiimis, avage kontakt või valige "
+"listivaatest mitu kontakti ning vajutage \"Portaali ligipääsu haldus\" "
+"valikule \"Tegevused\" alt."
 
 #. module: auth_signup
 #: model:ir.model,name:auth_signup.model_res_users
