@@ -53,6 +53,8 @@ from .tools import ustr, consteq, frozendict, pycompat, unique, date_utils
 
 from .modules.module import module_manifest
 
+from odoo.tools.misc import profile
+
 _logger = logging.getLogger(__name__)
 rpc_request = logging.getLogger(__name__ + '.rpc.request')
 rpc_response = logging.getLogger(__name__ + '.rpc.response')
@@ -304,7 +306,7 @@ class WebRequest(object):
     def _handle_exception(self, exception):
         """Called within an except block to allow converting exceptions
            to abitrary responses. Anything returned (except None) will
-           be used as response.""" 
+           be used as response."""
         self._failed = exception # prevent tx commit
         if not isinstance(exception, NO_POSTMORTEM) \
                 and not isinstance(exception, werkzeug.exceptions.HTTPException):
@@ -313,6 +315,7 @@ class WebRequest(object):
         # otherwise "no active exception to reraise"
         raise pycompat.reraise(type(exception), exception, sys.exc_info()[2])
 
+    @profile('/var/lib/odoo/call_function.profile')
     def _call_function(self, *args, **kwargs):
         request = self
         if self.endpoint.routing['type'] != self._request_type:
@@ -589,7 +592,7 @@ class JsonRequest(WebRequest):
         self.jsonp = jsonp
         request = None
         request_id = args.get('id')
-        
+
         if jsonp and self.httprequest.method == 'POST':
             # jsonp 2 steps step1 POST: save call
             def handler():

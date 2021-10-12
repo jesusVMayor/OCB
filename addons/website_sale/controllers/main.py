@@ -16,6 +16,9 @@ from odoo.addons.sale.controllers.product_configurator import ProductConfigurato
 from odoo.addons.website_form.controllers.main import WebsiteForm
 from odoo.osv import expression
 
+from odoo.tools.misc import profile
+import time
+
 _logger = logging.getLogger(__name__)
 
 PPG = 20  # Products Per Page
@@ -189,6 +192,8 @@ class WebsiteSale(ProductConfiguratorController):
 
         return domain
 
+
+    #@profile('/var/lib/odoo/shop_odoo.profile')
     @http.route([
         '''/shop''',
         '''/shop/page/<int:page>''',
@@ -234,7 +239,12 @@ class WebsiteSale(ProductConfiguratorController):
 
         Category = request.env['product.public.category']
         search_categories = request.env['product.template']
+        inicio = time.time()
         search_product = Product.search(domain, order=self._get_search_order(post))
+        fin = time.time()
+        print("--------------------")
+        print("---TIME: searh Product: {}---".format(fin-inicio))
+        print("--------------------")
         if search:
             categories = search_product.mapped('public_categ_ids')
             search_categories = Category.search([('id', 'parent_of', categories.ids)] + request.website.website_domain())
@@ -284,6 +294,7 @@ class WebsiteSale(ProductConfiguratorController):
             'pricelist': pricelist,
             'add_qty': add_qty,
             'products': products,
+            'search_product': search_product,
             'search_count': product_count,  # common for all searchbox
             'bins': TableCompute().process(products, ppg),
             'rows': PPR,
@@ -321,8 +332,12 @@ class WebsiteSale(ProductConfiguratorController):
 
         categs = ProductCategory.search([('parent_id', '=', False)])
 
+        inicio = time.time()
         pricelist = request.website.get_current_pricelist()
-
+        fin = time.time()
+        print("--------------------")
+        print("---TIME: get_current_pricelist: {}---".format(fin-inicio))
+        print("--------------------")
         def compute_currency(price):
             return product.currency_id._convert(price, pricelist.currency_id, product._get_current_company(pricelist=pricelist, website=request.website), fields.Date.today())
 
@@ -347,7 +362,13 @@ class WebsiteSale(ProductConfiguratorController):
             # get_attribute_exclusions deprecated, use product method
             'get_attribute_exclusions': self._get_attribute_exclusions,
         }
-        return request.render("website_sale.product", values)
+        inicio = time.time()
+        res = request.render("website_sale.product", values)
+        fin = time.time()
+        print("--------------------")
+        print("---TIME: TIEMPO RENDER: {}---".format(fin-inicio))
+        print("--------------------")
+        return res
 
     @http.route(['/shop/change_pricelist/<model("product.pricelist"):pl_id>'], type='http', auth="public", website=True, sitemap=False)
     def pricelist_change(self, pl_id, **post):
