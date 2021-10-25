@@ -53,7 +53,6 @@ from .tools import ustr, consteq, frozendict, pycompat, unique, date_utils
 
 from .modules.module import module_manifest
 
-from odoo.tools.misc import profile
 
 _logger = logging.getLogger(__name__)
 rpc_request = logging.getLogger(__name__ + '.rpc.request')
@@ -315,7 +314,6 @@ class WebRequest(object):
         # otherwise "no active exception to reraise"
         raise pycompat.reraise(type(exception), exception, sys.exc_info()[2])
 
-    @profile('/var/lib/odoo/call_function.profile')
     def _call_function(self, *args, **kwargs):
         request = self
         if self.endpoint.routing['type'] != self._request_type:

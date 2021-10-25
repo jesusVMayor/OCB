@@ -325,7 +325,7 @@ class Website(models.Model):
                 update_pricelist = True
 
             # update the pricelist
-            if update_pricelist:
+            if update_pricelist and pricelist_id != sale_order.pricelist_id.id:
                 request.session['website_sale_current_pl'] = pricelist_id
                 values = {'pricelist_id': pricelist_id}
                 sale_order.write(values)

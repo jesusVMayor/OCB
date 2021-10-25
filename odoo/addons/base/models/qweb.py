@@ -283,8 +283,6 @@ class QWeb(object):
         where ``qweb`` is a QWeb instance, ``append`` is a unary function to
         collect strings into a result, and ``values`` are the values to render.
         """
-        print("___TEMPLATE___compile_______________________________________")
-        print(template)
         if options is None:
             options = {}
 
@@ -292,9 +290,7 @@ class QWeb(object):
         options = frozendict(options)
 
         element, document = self.get_template(template, options)
-        print(element)
         name = element.get('t-name', 'unknown')
-        print(name)
 
         _options['template'] = template
         _options['ast_calls'] = []
@@ -1156,9 +1152,6 @@ class QWeb(object):
 
         # create function $foreach
         def_name = self._create_def(options, self._compile_directives(el, options), prefix='foreach', lineno=el.sourceline)
-        print(def_name)
-        print(el)
-        print(el.sourceline)
         # for $values in foreach_iterator(values, $expr, $varname):
         #     $foreach(self, append, $values, options)
         return [ast.For(

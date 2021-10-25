@@ -3,7 +3,7 @@
 import json
 import logging
 from werkzeug.exceptions import Forbidden, NotFound
-
+from odoo.tools.misc import profile
 from odoo import fields, http, tools, _
 from odoo.http import request
 from odoo.addons.base.models.ir_qweb_fields import nl2br
@@ -15,9 +15,6 @@ from odoo.addons.website.controllers.main import Website
 from odoo.addons.sale.controllers.product_configurator import ProductConfiguratorController
 from odoo.addons.website_form.controllers.main import WebsiteForm
 from odoo.osv import expression
-
-from odoo.tools.misc import profile
-import time
 
 _logger = logging.getLogger(__name__)
 
@@ -239,12 +236,7 @@ class WebsiteSale(ProductConfiguratorController):
 
         Category = request.env['product.public.category']
         search_categories = request.env['product.template']
-        inicio = time.time()
         search_product = Product.search(domain, order=self._get_search_order(post))
-        fin = time.time()
-        print("--------------------")
-        print("---TIME: searh Product: {}---".format(fin-inicio))
-        print("--------------------")
         if search:
             categories = search_product.mapped('public_categ_ids')
             search_categories = Category.search([('id', 'parent_of', categories.ids)] + request.website.website_domain())
@@ -332,12 +324,7 @@ class WebsiteSale(ProductConfiguratorController):
 
         categs = ProductCategory.search([('parent_id', '=', False)])
 
-        inicio = time.time()
         pricelist = request.website.get_current_pricelist()
-        fin = time.time()
-        print("--------------------")
-        print("---TIME: get_current_pricelist: {}---".format(fin-inicio))
-        print("--------------------")
         def compute_currency(price):
             return product.currency_id._convert(price, pricelist.currency_id, product._get_current_company(pricelist=pricelist, website=request.website), fields.Date.today())
 
@@ -362,12 +349,7 @@ class WebsiteSale(ProductConfiguratorController):
             # get_attribute_exclusions deprecated, use product method
             'get_attribute_exclusions': self._get_attribute_exclusions,
         }
-        inicio = time.time()
         res = request.render("website_sale.product", values)
-        fin = time.time()
-        print("--------------------")
-        print("---TIME: TIEMPO RENDER: {}---".format(fin-inicio))
-        print("--------------------")
         return res
 
     @http.route(['/shop/change_pricelist/<model("product.pricelist"):pl_id>'], type='http', auth="public", website=True, sitemap=False)
@@ -771,15 +753,17 @@ class WebsiteSale(ProductConfiguratorController):
         return request.render("website_sale.checkout", values)
 
     @http.route(['/shop/confirm_order'], type='http', auth="public", website=True, sitemap=False)
+    @profile('/var/lib/odoo/shop_odoo.profile')
     def confirm_order(self, **post):
         order = request.website.sale_get_order()
 
         redirection = self.checkout_redirection(order)
         if redirection:
             return redirection
-
+        old_fiscal_position = order.fiscal_position_id
         order.onchange_partner_shipping_id()
-        order.order_line._compute_tax_id()
+        if old_fiscal_position != order.fiscal_position_id:
+            order.order_line._compute_tax_id()
         request.session['sale_last_order_id'] = order.id
         request.website.sale_get_order(update_pricelist=True)
         extra_step = request.website.viewref('website_sale.extra_info_option')
