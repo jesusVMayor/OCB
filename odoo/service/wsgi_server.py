@@ -12,11 +12,17 @@ import sys
 import threading
 import traceback
 
-from xmlrpc import client as xmlrpclib
+
+try:
+    from xmlrpc import client as xmlrpclib
+except ImportError:
+    # pylint: disable=bad-python3-import
+    import xmlrpclib
 
 import werkzeug.exceptions
 import werkzeug.wrappers
 import werkzeug.serving
+import werkzeug.contrib.fixers
 
 import odoo
 from odoo.tools import config
@@ -70,6 +76,44 @@ def xmlrpc_handle_exception_string(e):
 
     return xmlrpclib.dumps(fault, allow_none=None, encoding=None)
 
+
+def wsgi_xmlrpc_ok(environ, start_response):
+    """Two routes are available for XML-RPC
+
+    /xmlrpc/<service> route returns faultCode as strings. This is a historic
+    violation of the protocol kept for compatibility.
+
+    /xmlrpc/2/<service> is a new route that returns faultCode as int and is
+    therefore fully compliant.
+    """
+    if environ["REQUEST_METHOD"] == "POST" and environ["PATH_INFO"].startswith(
+        "/xmlrpc/"
+    ):
+        length = int(environ["CONTENT_LENGTH"])
+        data = environ["wsgi.input"].read(length)
+
+        # Distinguish betweed the 2 faultCode modes
+        string_faultcode = True
+        service = environ["PATH_INFO"][len("/xmlrpc/") :]
+        if environ["PATH_INFO"].startswith("/xmlrpc/2/"):
+            service = service[len("2/") :]
+            string_faultcode = False
+
+        params, method = xmlrpclib.loads(data)
+        try:
+            result = odoo.http.dispatch_rpc(service, method, params)
+            response = xmlrpclib.dumps((result,), methodresponse=1, allow_none=False)
+        except Exception as e:
+            if string_faultcode:
+                response = odoo.service.wsgi_server.xmlrpc_handle_exception_string(e)
+            else:
+                response = odoo.service.wsgi_server.xmlrpc_handle_exception_int(e)
+
+        return werkzeug.wrappers.Response(response=response, mimetype="text/xml")(
+            environ, start_response
+        )
+
+
 def application_unproxied(environ, start_response):
     """ WSGI entry point."""
     # cleanup db/uid trackers - they're set at HTTP dispatch in
@@ -83,6 +127,12 @@ def application_unproxied(environ, start_response):
         del threading.current_thread().dbname
     if hasattr(threading.current_thread(), 'url'):
         del threading.current_thread().url
+
+    with odoo.api.Environment.manage():
+        # Try all handlers until one returns some result (i.e. not None).
+        result = wsgi_xmlrpc_ok(environ, start_response)
+        if result:
+            return result
 
     with odoo.api.Environment.manage():
         result = odoo.http.root(environ, start_response)
