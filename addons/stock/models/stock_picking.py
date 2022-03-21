@@ -92,7 +92,7 @@ class PickingType(models.Model):
                     'company_id': wh.company_id.id,
                 }).id
             else:
-                vals['sequence_id'] = self.env['ir.sequence'].create({
+                vals['sequence_id'] = self.env['ir.sequence'].sudo().create({
                     'name': _('Sequence') + ' ' + vals['sequence_code'],
                     'prefix': vals['sequence_code'], 'padding': 5,
                     'company_id': vals.get('company_id') or self.env.company.id,
@@ -109,13 +109,13 @@ class PickingType(models.Model):
         if 'sequence_code' in vals:
             for picking_type in self:
                 if picking_type.warehouse_id:
-                    picking_type.sequence_id.write({
+                    picking_type.sequence_id.sudo().write({
                         'name': picking_type.warehouse_id.name + ' ' + _('Sequence') + ' ' + vals['sequence_code'],
                         'prefix': picking_type.warehouse_id.code + '/' + vals['sequence_code'] + '/', 'padding': 5,
                         'company_id': picking_type.warehouse_id.company_id.id,
                     })
                 else:
-                    picking_type.sequence_id.write({
+                    picking_type.sequence_id.sudo().write({
                         'name': _('Sequence') + ' ' + vals['sequence_code'],
                         'prefix': vals['sequence_code'], 'padding': 5,
                         'company_id': picking_type.env.company.id,
@@ -489,16 +489,17 @@ class Picking(models.Model):
             })
             picking_move_lines[picking_id.id].add(move.id)
         for picking in self:
-            if not picking_moves_state_map[picking.id]:
+            picking_id = (picking.ids and picking.ids[0]) or picking.id
+            if not picking_moves_state_map[picking_id]:
                 picking.state = 'draft'
-            elif picking_moves_state_map[picking.id]['any_draft']:
+            elif picking_moves_state_map[picking_id]['any_draft']:
                 picking.state = 'draft'
-            elif picking_moves_state_map[picking.id]['all_cancel']:
+            elif picking_moves_state_map[picking_id]['all_cancel']:
                 picking.state = 'cancel'
-            elif picking_moves_state_map[picking.id]['all_cancel_done']:
+            elif picking_moves_state_map[picking_id]['all_cancel_done']:
                 picking.state = 'done'
             else:
-                relevant_move_state = self.env['stock.move'].browse(picking_move_lines[picking.id])._get_relevant_state_among_moves()
+                relevant_move_state = self.env['stock.move'].browse(picking_move_lines[picking_id])._get_relevant_state_among_moves()
                 if picking.immediate_transfer and relevant_move_state not in ('draft', 'cancel', 'done'):
                     picking.state = 'assigned'
                 elif relevant_move_state == 'partially_available':
@@ -738,7 +739,9 @@ class Picking(models.Model):
         @return: True
         """
         self.filtered(lambda picking: picking.state == 'draft').action_confirm()
-        moves = self.mapped('move_lines').filtered(lambda move: move.state not in ('draft', 'cancel', 'done'))
+        moves = self.mapped('move_lines').filtered(lambda move: move.state not in ('draft', 'cancel', 'done')).sorted(
+            key=lambda move: (-int(move.priority), not bool(move.date_deadline), move.date_deadline, move.id)
+        )
         if not moves:
             raise UserError(_('Nothing to check the availability for.'))
         # If a package level is done when confirmed its location can be different than where it will be reserved.
@@ -1086,10 +1089,17 @@ class Picking(models.Model):
                     body=_('The backorder <a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a> has been created.') % (
                         backorder_picking.id, backorder_picking.name))
                 moves_to_backorder.write({'picking_id': backorder_picking.id})
-                moves_to_backorder.mapped('package_level_id').write({'picking_id':backorder_picking.id})
+                moves_to_backorder.move_line_ids.package_level_id.write({'picking_id':backorder_picking.id})
                 moves_to_backorder.mapped('move_line_ids').write({'picking_id': backorder_picking.id})
                 backorders |= backorder_picking
+        backorders_to_assign = backorders.filtered(lambda picking: picking._needs_automatic_assign())
+        if backorders_to_assign:
+            backorders_to_assign.action_assign()
         return backorders
+
+    def _needs_automatic_assign(self):
+        self.ensure_one()
+        return True
 
     def _log_activity_get_documents(self, orig_obj_changes, stream_field, stream, sorted_method=False, groupby_method=False):
         """ Generic method to log activity. To use with

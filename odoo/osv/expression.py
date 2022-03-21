@@ -532,7 +532,7 @@ class expression(object):
             if left_model._parent_store:
                 domain = OR([
                     [('parent_path', '=like', rec.parent_path + '%')]
-                    for rec in left_model.browse(ids)
+                    for rec in left_model.sudo().browse(ids)
                 ])
             else:
                 # recursively retrieve all children nodes with sudo(); the
@@ -558,7 +558,7 @@ class expression(object):
             if left_model._parent_store:
                 parent_ids = [
                     int(label)
-                    for rec in left_model.browse(ids)
+                    for rec in left_model.sudo().browse(ids)
                     for label in rec.parent_path.split('/')[:-1]
                 ]
                 domain = [('id', 'in', parent_ids)]
@@ -760,7 +760,7 @@ class expression(object):
 
                     if isinstance(ids2, Query) and comodel._fields[field.inverse_name].store:
                         op1 = 'not inselect' if operator in NEGATIVE_TERM_OPERATORS else 'inselect'
-                        subquery, subparams = ids2.select('"%s"."%s"' % (comodel._table, field.inverse_name))
+                        subquery, subparams = ids2.subselect('"%s"."%s"' % (comodel._table, field.inverse_name))
                         push(('id', op1, (subquery, subparams)), model, alias, internal=True)
                     elif ids2 and comodel._fields[field.inverse_name].store:
                         op1 = 'not inselect' if operator in NEGATIVE_TERM_OPERATORS else 'inselect'
@@ -823,7 +823,7 @@ class expression(object):
                     if isinstance(ids2, Query):
                         # rewrite condition in terms of ids2
                         subop = 'not inselect' if operator in NEGATIVE_TERM_OPERATORS else 'inselect'
-                        subquery, subparams = ids2.select()
+                        subquery, subparams = ids2.subselect()
                         query = 'SELECT "%s" FROM "%s" WHERE "%s" IN (%s)' % (rel_id1, rel_table, rel_id2, subquery)
                         push(('id', subop, (query, subparams)), model, alias, internal=True)
                     else:
@@ -981,7 +981,7 @@ class expression(object):
                     query = '(%s."%s" IS NULL)' % (table_alias, left)
                 params = []
             elif isinstance(right, Query):
-                subquery, subparams = right.select()
+                subquery, subparams = right.subselect()
                 query = '(%s."%s" %s (%s))' % (table_alias, left, operator, subquery)
                 params = subparams
             elif isinstance(right, (list, tuple)):
