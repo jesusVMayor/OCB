@@ -290,7 +290,53 @@ class Website(models.Model):
                 # change the partner, and trigger the onchange
                 sale_order.write({'partner_id': partner.id})
                 sale_order.onchange_partner_id()
-                sale_order.write({'partner_invoice_id': partner.id})
+
+                if partner.portfolio:
+                    # Busca el comercial correcto
+                    user = partner.user_id
+                    if not partner.is_company and not user:
+                        user = partner.commercial_partner_id.user_id
+
+                    if  partner.type in ['contact', 'other'] and partner.parent_id and partner.company_type == 'person':
+                        # Busca las direcciones de us "padre", sí si es de envñio , devuelve esta
+                        # Esto nos permite que funcione bien si el partner es un subcontacto de una "delegacion"
+                        # o la propia "delegación"
+                        addr = partner.parent_id.address_get(['delivery'])
+                        invoice = partner.commercial_partner_id.address_get(['invoice'])['invoice']
+                        if partner.parent_id.type == 'delivery':
+                            delivery = partner.parent_id.id
+                        else:
+                            delivery = addr['delivery']
+                    elif partner.type == 'delivery' and partner.parent_id:
+                        addr = partner.commercial_partner_id.address_get(['invoice'])
+                        delivery = partner.id
+                        invoice = addr['invoice']
+                    else:
+
+                        addr = partner.address_get(['delivery', 'invoice'])
+                        invoice = addr['invoice']
+                        delivery = addr['delivery']
+
+                    if partner.invoice_group_method_id:
+                        invoice_group_method = partner.invoice_group_method_id.id
+                    else:
+                        invoice_group_method = partner.commercial_partner_id.invoice_group_method_id.id
+
+                    values={
+                        'partner_invoice_id': invoice,
+                        'partner_shipping_id': delivery,
+                        'user_id': user.id,
+                        'invoice_group_method_id': invoice_group_method
+                    }
+
+                if partner.skip_website_checkout_payment:
+                    sale_type = self.env['sale.order.type'].sudo().search([('telesale', '=', True)])
+                else:
+                    sale_type = self.env['sale.order.type'].sudo().search([('web', '=', True)])
+                if sale_type:
+                    values ['type_id'] = sale_type[0].id
+
+                sale_order.write(values)
                 sale_order.onchange_partner_shipping_id() # fiscal position
                 sale_order['payment_term_id'] = self.sale_get_payment_term(partner)
 
