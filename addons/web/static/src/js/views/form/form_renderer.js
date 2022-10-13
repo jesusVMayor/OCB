@@ -203,14 +203,16 @@ var FormRenderer = BasicRenderer.extend({
      * @see setLocalState
      * @returns {Object} a map from notebook name to the active tab index
      */
-    getLocalState: function () {
+     getLocalState: function () {
         const state = {};
+        var k = 0;
         for (const notebook of this.el.querySelectorAll(':scope div.o_notebook')) {
-            const name = notebook.dataset.name;
+            const name = k;
             const navs = notebook.querySelectorAll(':scope .o_notebook_headers .nav-item > .nav-link');
             state[name] = Math.max([...navs].findIndex(
                 nav => nav.classList.contains('active')
             ), 0);
+            k++;
         }
         return state;
     },
@@ -248,12 +250,13 @@ var FormRenderer = BasicRenderer.extend({
      *
      * @param {Object} state the result from a getLocalState call
      */
-    setLocalState: function (state) {
+     setLocalState: function (state) {
+        var k = 0;
         for (const notebook of this.el.querySelectorAll(':scope div.o_notebook')) {
             if (notebook.closest(".o_field_widget")) {
                 continue;
             }
-            const name = notebook.dataset.name;
+            const name = k;
             if (name in state) {
                 const navs = notebook.querySelectorAll(':scope .o_notebook_headers .nav-item');
                 const pages = notebook.querySelectorAll(':scope > .tab-content > .tab-pane');
@@ -278,6 +281,7 @@ var FormRenderer = BasicRenderer.extend({
                 }
                 core.bus.trigger('DOM_updated');
             }
+            k++;
         }
     },
     /**
