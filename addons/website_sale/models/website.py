@@ -290,6 +290,7 @@ class Website(models.Model):
                 # change the partner, and trigger the onchange
                 sale_order.write({'partner_id': partner.id})
                 sale_order.onchange_partner_id()
+                values={}
 
                 if partner.portfolio:
                     # Busca el comercial correcto
@@ -322,19 +323,19 @@ class Website(models.Model):
                     else:
                         invoice_group_method = partner.commercial_partner_id.invoice_group_method_id.id
 
-                    values={
+                    values.update({
                         'partner_invoice_id': invoice,
                         'partner_shipping_id': delivery,
                         'user_id': user.id,
                         'invoice_group_method_id': invoice_group_method
-                    }
+                    })
 
                 if partner.skip_website_checkout_payment:
                     sale_type = self.env['sale.order.type'].sudo().search([('telesale', '=', True)])
                 else:
                     sale_type = self.env['sale.order.type'].sudo().search([('web', '=', True)])
                 if sale_type:
-                    values ['type_id'] = sale_type[0].id
+                    values['type_id'] = sale_type[0].id
 
                 sale_order.write(values)
                 sale_order.onchange_partner_shipping_id() # fiscal position
